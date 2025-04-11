@@ -4,7 +4,7 @@
     "slug": "apptesis",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logofinal.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -15,12 +15,18 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.cristians12.apptesis"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
+    },
+    "splash": {
+      "image": "./assets/images/logofinal.png", // Ruta de la imagen de Splash Screen
+      "resizeMode": "contain", // Opciones: "contain", "cover", "native"
+      "backgroundColor": "#ffffff" // Color de fondo de la pantalla
     },
     "plugins": [
       "expo-router",
@@ -36,6 +42,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "1b36a14e-ffbd-4d15-8659-e1ba0a04f7f1"
+      }
     }
   }
 }
