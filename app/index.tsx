@@ -13,60 +13,33 @@ export default function Index() {
 
   const url = "http://192.168.4.1";
 
-  // Abre o crea la base de datos
-  // const db = SQLite.openDatabase("databaseName.db");
+  const db = SQLite.openDatabaseAsync("registros.db");
 
-  // Función para crear una tabla
-  // const crearTabla = () => {
-  //   db.transaction((tx) => {
-  //     tx.executeSql(
-  //       `CREATE TABLE IF NOT EXISTS mensajes (
-  //         id INTEGER PRIMARY KEY AUTOINCREMENT,
-  //         data TEXT NOT NULL,
-  //         status TEXT NOT NULL
-  //       );`,
-  //       [],
-  //       () => console.log("Tabla creada exitosamente"),
-  //       (tx, error) => {
-  //         console.error("Error al crear la tabla:", error);
-  //         return false;
-  //       }
-  //     );
-  //   });
-  // };
-
-  // Función para insertar datos en la tabla
-  // const insertarMensaje = (data: string, status: string) => {
-  //   db.transaction((tx) => {
-  //     tx.executeSql(
-  //       `INSERT INTO mensajes (data, status) VALUES (?, ?);`,
-  //       [data, status],
-  //       () => console.log("Mensaje insertado exitosamente"),
-  //       (tx, error) => {
-  //         console.error("Error al insertar el mensaje:", error);
-  //         return false;
-  //       }
-  //     );
-  //   });
-  // };
-
-  // Función para obtener datos de la tabla
-  const obtenerMensajes = () => {
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `SELECT * FROM mensajes;`,
-    //     [],
-    //     (_, { rows }) => {
-    //       console.log("Mensajes obtenidos:", rows._array);
-    //       Alert.alert("Mensajes", JSON.stringify(rows._array));
-    //     },
-    //     (tx, error) => {
-    //       console.error("Error al obtener los mensajes:", error);
-    //       return false;
-    //     }
-    //   );
-    // });
+  const crearTabla = async () => {
+    (await db).execSync(
+      `
+      CREATE TABLE IF NOT EXISTS registros (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+          semana VARCHAR(50) NOT NULL
+        );
+      INSERT INTO registros (timestamp, semana) VALUES ('2025-04-21 10:00:00', 'Semana 1');
+      `
+    )
   };
+
+  const intentarCrearRegistro = async () => {
+    try {
+      const firstRow = await (await db).getFirstAsync('SELECT * FROM registros');
+      if (firstRow) {
+        console.log(firstRow.id, firstRow.timestamp, firstRow.semana);
+      } else {
+        console.log("No se encontraron registros");
+      }
+    } catch (error) {
+      console.error("Error al obtener el registro:", error);
+    }
+  }
 
   const obtenerMensaje = async () => {
     try {
@@ -89,18 +62,21 @@ export default function Index() {
       setMensaje({ status: "success", data: data.mensaje || JSON.stringify(data) });
 
       // insertarMensaje(JSON.stringify(data), "success");
-    } catch (error) {
-      console.error("Hubo un error:", error);
-      Alert.alert("Error", error.message);
-      setMensaje({ status: "error", data: error.message });
-
-      // insertarMensaje(error.message, "error");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Hubo un error:", error);
+        Alert.alert("Error", error.message);
+        setMensaje({ status: "error", data: error.message });
+      } else {
+        console.error("Error desconocido:", error);
+        Alert.alert("Error", "Ocurrió un error desconocido");
+        setMensaje({ status: "error", data: "Error desconocido" });
+      }
     }
-  };
+  }
 
   useEffect(() => {
-    // crearTabla();
-    // obtenerMensaje();
+    crearTabla();
   }, []);
 
   return (
@@ -110,11 +86,8 @@ export default function Index() {
         <Text>Ver registros de dosificación</Text>
         <Text>{mensaje.data}</Text>
       </View>
-      <TouchableOpacity style={styles.boton} onPress={obtenerMensaje}>
-        <Text>Hacer petición</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.boton} onPress={obtenerMensajes}>
-        <Text>Ver mensajes guardados</Text>
+      <TouchableOpacity style={styles.boton} onPress={intentarCrearRegistro}>
+        <Text>Conectarse al panel.</Text>
       </TouchableOpacity>
     </View>
   );
