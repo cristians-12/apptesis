@@ -10,6 +10,7 @@ export default function Index() {
     data: "",
     status: "success",
   });
+  const [registros, setRegistros] = useState<[]>([]);
 
   const url = "http://192.168.4.1";
 
@@ -28,7 +29,7 @@ export default function Index() {
     )
   };
 
-  const intentarCrearRegistro = async () => {
+  const obtenerPrimerRegistro = async () => {
     try {
       const firstRow = await (await db).getFirstAsync('SELECT * FROM registros');
       if (firstRow) {
@@ -86,7 +87,7 @@ export default function Index() {
         <Text>Ver registros de dosificación</Text>
         <Text>{mensaje.data}</Text>
       </View>
-      <TouchableOpacity style={styles.boton} onPress={intentarCrearRegistro}>
+      <TouchableOpacity style={styles.boton} onPress={obtenerPrimerRegistro}>
         <Text>Conectarse al panel.</Text>
       </TouchableOpacity>
     </View>

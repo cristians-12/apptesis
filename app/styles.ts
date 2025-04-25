@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create(
+const styles = StyleSheet.create(
     {
         container: {
             flex: 1,
@@ -12,8 +12,12 @@ export const styles = StyleSheet.create(
             height: 100,
             objectFit: 'contain'
         },
-        boton:{
-            backgroundColor: 'red'
+        boton: {
+            backgroundColor: 'gray',
+            borderRadius: 10,
+            padding: 10,
         }
     }
 )
+
+export default styles;
