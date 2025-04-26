@@ -7,8 +7,8 @@ export default function Index() {
   const logoImage = require("./../assets/images/logofinal.png");
 
   const [mensaje, setMensaje] = useState<{ status: string; data: string }>({
-    data: "",
-    status: "success",
+    data: "Aun no hay datos.",
+    status: "false",
   });
   const [registros, setRegistros] = useState<[]>([]);
 
@@ -42,31 +42,24 @@ export default function Index() {
     }
   }
 
-  const obtenerMensaje = async () => {
+  const obtenerRegistrosArduino = async () => {
     try {
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`Error en la solicitud: ${response.status}`);
       }
+      // const responseText = await response.text();
+      // console.log("Respuesta completa:", responseText);
+      const datos = await response.json();
+      setMensaje(datos)
+      console.log("Datos:", datos);
 
-      const responseText = await response.text();
-      console.log("Respuesta completa:", responseText);
+      // Alert.alert("Respuesta completa", JSON.stringify(data));
+      // setMensaje({ status: "success", data: data.mensaje || JSON.stringify(data) });
 
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        throw new Error("La respuesta no es un JSON válido");
-      }
-
-      Alert.alert("Respuesta completa", JSON.stringify(data));
-      setMensaje({ status: "success", data: data.mensaje || JSON.stringify(data) });
-
-      // insertarMensaje(JSON.stringify(data), "success");
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Hubo un error:", error);
-        Alert.alert("Error", error.message);
         setMensaje({ status: "error", data: error.message });
       } else {
         console.error("Error desconocido:", error);
@@ -78,17 +71,18 @@ export default function Index() {
 
   useEffect(() => {
     crearTabla();
+    // obtenerRegistrosArduino();
   }, []);
 
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={logoImage} />
-      <View>
+      <View style={styles.containerRegistros}>
         <Text>Ver registros de dosificación</Text>
         <Text>{mensaje.data}</Text>
       </View>
-      <TouchableOpacity style={styles.boton} onPress={obtenerPrimerRegistro}>
-        <Text>Conectarse al panel.</Text>
+      <TouchableOpacity style={styles.boton} onPress={obtenerRegistrosArduino}>
+        <Text style={styles.textWhite}>Conectarse al panel</Text>
       </TouchableOpacity>
     </View>
   );

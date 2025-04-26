@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create(
+export const styles = StyleSheet.create(
     {
         container: {
             flex: 1,
@@ -8,16 +8,27 @@ const styles = StyleSheet.create(
             alignItems: "center",
         },
         image: {
-            width: 100,
-            height: 100,
+            width: 150,
+            height: 150,
             objectFit: 'contain'
         },
         boton: {
-            backgroundColor: 'gray',
+            backgroundColor: 'blue',
+            borderRadius: 20,
+            paddingVertical: 10,
+            marginTop: 20,
+            paddingHorizontal: 20,
+        },
+        containerRegistros: {
+            borderWidth: 1,
+            borderColor: 'black',
+            padding: 15,
             borderRadius: 10,
-            padding: 10,
+        },
+        textWhite: {
+            color: 'white',
+            fontSize: 20,
+            fontWeight: 'bold',
         }
     }
 )
-
-export default styles;
