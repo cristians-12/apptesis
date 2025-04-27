@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { colors } from "./utils/colors";
+import { fontFamilies } from "./utils/fontfamily";
 
 export const styles = StyleSheet.create(
     {
@@ -31,7 +32,7 @@ export const styles = StyleSheet.create(
         textWhite: {
             color: 'white',
             fontSize: 20,
-            fontWeight: 'bold',
+            fontFamily: fontFamilies.MONTSERRAT.bold
         },
         btnManual: {
             // backgroundColor: colors.primary
@@ -42,6 +43,9 @@ export const styles = StyleSheet.create(
             position: 'absolute',
             top: 30,
             right: 30,
+        },
+        text: {
+            fontFamily: fontFamilies.MONTSERRAT.medium
         }
     }
 )

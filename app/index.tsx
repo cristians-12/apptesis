@@ -85,7 +85,7 @@ export default function Index() {
         <BookIcon fill={colors.primary} />
       </TouchableOpacity>
       <Image style={styles.image} source={logoImage} />
-      <Text>Ver registros de dosificación</Text>
+      <Text style={styles.text}>Ver registros de dosificación</Text>
       <View style={styles.containerRegistros}>
         <Text>{mensaje.data}</Text>
       </View>

@@ -1,31 +1,37 @@
-// filepath: c:\apptesis\app\_layout.tsx
-import { useEffect } from "react";
-import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
+// app/_layout.tsx
+import { Slot, SplashScreen } from "expo-router";
+import { useFonts } from "expo-font";
+import { useCallback, useEffect } from "react";
+import { View, ActivityIndicator } from "react-native";
+
+// Evita que el splash desaparezca automáticamente
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  useEffect(() => {
-    async function prepare() {
-      try {
-        await SplashScreen.preventAutoHideAsync();
-        // Simula una carga (aumenta el tiempo aquí)
-        await new Promise(resolve => setTimeout(resolve, 4000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        await SplashScreen.hideAsync();
-      }
+  // 1) Carga las fuentes
+  const [fontsLoaded] = useFonts({
+    MontserratLight: require("../assets/fonts/Montserrat-Light.ttf"),
+    MontserratMedium: require("../assets/fonts/Montserrat-Medium.ttf"),
+    MontserratBold: require("../assets/fonts/Montserrat-Bold.ttf"),
+  });
+
+  // 2) Cuando fontsLoaded cambie a true, ocultamos el splash
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
     }
+  }, [fontsLoaded]);
 
-    prepare();
-  }, []);
+  // 3) Mientras no estén listas las fuentes, devolvemos null (la pantalla sigue en splash)
+  if (!fontsLoaded) {
+    return null;
+  }
 
+  // 4) Una vez cargadas, renderizamos las pantallas
+  //    y llamamos a onLayoutRootView para quitar el splash
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      {/* Define tus pantallas aquí */}
-      <Stack.Screen name="index" options={{ title: "Inicio" }} />
-      <Stack.Screen name="about" options={{ title: "Acerca de" }} />
-      <Stack.Screen name="profile" options={{ title: "Perfil" }} />
-    </Stack>
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <Slot />
+    </View>
   );
 }
