@@ -1,4 +1,4 @@
-import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import { useEffect, useState } from "react";
 import ModalManual from "./components/organisms/modals/ModalManual";
@@ -6,6 +6,8 @@ import { url } from "./utils/constants";
 import BookIcon from "@/assets/icons/BookIcon";
 import { colors } from "./utils/colors";
 import useDatabase from "./hooks/useDatabase";
+import { RegistroType } from "./types/semana";
+import RegistroCard from "./components/organisms/RegistroCard";
 
 export default function Index() {
   const logoImage = require("./../assets/images/logofinal.png");
@@ -14,11 +16,14 @@ export default function Index() {
     status: "false",
   });
   const [modal, setModal] = useState(false);
-  const [registros, setRegistros] = useState<[]>([]);
+  const [registros, setRegistros] = useState<RegistroType[] | []>([]);
 
-  const { crearTabla, guardarRegistro, obtenerPrimerRegistro, obtenerTodosRegistros, vaciarTabla } = useDatabase();
-
-
+  const {
+    crearTabla,
+    guardarRegistro,
+    obtenerPrimerRegistro,
+    obtenerTodosRegistros,
+    vaciarTabla } = useDatabase();
 
   const obtenerRegistrosArduino = async () => {
     try {
@@ -49,27 +54,48 @@ export default function Index() {
     setModal(false);
   }
 
+  const obtenerRegistrosyGuardar = async () => {
+    const resultados = await obtenerTodosRegistros();
+    setRegistros(resultados);
+  }
+
   useEffect(() => {
     crearTabla();
-    // obtenerRegistrosArduino();
-    // obtenerPrimerRegistro();
-    obtenerTodosRegistros();
+    obtenerRegistrosyGuardar();
     // vaciarTabla();
   }, []);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => setModal(true)} style={styles.btnManual}>
-        <BookIcon fill={colors.primary} />
-      </TouchableOpacity>
-      <Image style={styles.image} source={logoImage} />
-      <Text style={styles.text}>Ver registros de dosificación</Text>
-      <View style={styles.containerRegistros}>
-        <Text style={styles.text}>{mensaje.data}</Text>
-      </View>
-      <TouchableOpacity style={styles.boton} onPress={obtenerRegistrosArduino}>
-        <Text style={styles.textWhite}>Conectarse al panel</Text>
-      </TouchableOpacity>
+      <ScrollView style={styles.scrollContainer} horizontal={false}>
+        <TouchableOpacity onPress={() => setModal(true)} style={styles.btnManual}>
+          <BookIcon fill={colors.primary} />
+        </TouchableOpacity>
+        <Image style={styles.image} source={logoImage} />
+        <Text style={{ ...styles.text, textAlign: 'center' }}>Registros de dosificación</Text>
+        <ScrollView style={styles.containerRegistros} horizontal={false} showsVerticalScrollIndicator={false}>
+          {registros.length > 0 ?
+            (
+
+              registros.map((registro) => (
+                <RegistroCard key={registro.id} fecha={registro.timestamp} semana={registro.semana} />
+              ))
+
+            )
+            :
+            (
+              <Text style={styles.text}>No hay registros.</Text>
+            )}
+        </ScrollView>
+        <TouchableOpacity style={styles.boton} onPress={obtenerRegistrosArduino}>
+          <Text style={styles.textWhite}>Conectarse al panel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.boton} onPress={() => guardarRegistro('2023-10-10')}>
+          <Text style={styles.textWhite}>Guardar registro</Text>
+        </TouchableOpacity>      <TouchableOpacity onPress={() => setModal(true)} style={styles.btnManual}>
+          <BookIcon fill={colors.primary} />
+        </TouchableOpacity>z
+      </ScrollView>
       {modal && <ModalManual onPressClose={handleCloseModal} />}
     </View>
   );

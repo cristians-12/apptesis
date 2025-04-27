@@ -13,7 +13,8 @@ export const styles = StyleSheet.create(
         image: {
             width: 150,
             height: 150,
-            objectFit: 'contain'
+            objectFit: 'contain',
+            marginHorizontal: 'auto'
         },
         boton: {
             backgroundColor: colors.primary,
@@ -30,11 +31,13 @@ export const styles = StyleSheet.create(
             marginTop: 20,
             height: 300,
             width: '90%',
+            marginHorizontal: 'auto',
         },
         textWhite: {
             color: 'white',
             fontSize: 20,
-            fontFamily: fontFamilies.MONTSERRAT.bold
+            fontFamily: fontFamilies.MONTSERRAT.bold,
+            textAlign: 'center'
         },
         btnManual: {
             // backgroundColor: colors.primary
@@ -43,11 +46,17 @@ export const styles = StyleSheet.create(
             padding: 7,
             borderRadius: 10,
             position: 'absolute',
-            top: 30,
-            right: 30,
+            top: 15,
+            right: 15,
         },
         text: {
             fontFamily: fontFamilies.MONTSERRAT.medium
+        },
+        scrollContainer: {
+            width: '100%',
+            height: '100%',
+            padding: 20,
+            // backgroundColor: colors.white,
         }
     }
 )

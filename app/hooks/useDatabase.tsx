@@ -10,16 +10,20 @@ export default function useDatabase() {
           CREATE TABLE IF NOT EXISTS registros (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-              semana VARCHAR(50) NOT NULL
             );
           `
         )
     };
 
-    const guardarRegistro = async () => {
-        const statement = await (await db).prepareAsync(
-            'INSERT INTO registros (value, intValue) VALUES ($value, $intValue)'
-        );
+    const guardarRegistro = async (fecha: string) => {
+        // const statement = await (await db).prepareAsync(
+        //     'INSERT INTO registros (value, intValue) VALUES ($value, $intValue)'
+        // );
+        console.log('Guardando registro con fecha:', fecha);
+        const result = (await db).execAsync(`
+            INSERT INTO registros (timestamp, semana) VALUES ('${fecha}', 'semana 1');
+            `)
+        console.log('Resultado de la inserción:', await result);
     }
     const obtenerPrimerRegistro = async () => {
         try {
