@@ -1,15 +1,14 @@
 import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import { useEffect, useState } from "react";
-import * as SQLite from "expo-sqlite";
 import ModalManual from "./components/organisms/modals/ModalManual";
 import { url } from "./utils/constants";
 import BookIcon from "@/assets/icons/BookIcon";
 import { colors } from "./utils/colors";
+import useDatabase from "./hooks/useDatabase";
 
 export default function Index() {
   const logoImage = require("./../assets/images/logofinal.png");
-
   const [mensaje, setMensaje] = useState<{ status: string; data: string }>({
     data: "Aun no hay datos.",
     status: "false",
@@ -17,33 +16,9 @@ export default function Index() {
   const [modal, setModal] = useState(false);
   const [registros, setRegistros] = useState<[]>([]);
 
-  const db = SQLite.openDatabaseAsync("registros.db");
+  const { crearTabla, guardarRegistro, obtenerPrimerRegistro, obtenerTodosRegistros, vaciarTabla } = useDatabase();
 
-  const crearTabla = async () => {
-    (await db).execSync(
-      `
-      CREATE TABLE IF NOT EXISTS registros (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-          semana VARCHAR(50) NOT NULL
-        );
-      INSERT INTO registros (timestamp, semana) VALUES ('2025-04-21 10:00:00', 'Semana 1');
-      `
-    )
-  };
 
-  const obtenerPrimerRegistro = async () => {
-    try {
-      const firstRow = await (await db).getFirstAsync('SELECT * FROM registros');
-      if (firstRow) {
-        console.log(firstRow.id, firstRow.timestamp, firstRow.semana);
-      } else {
-        console.log("No se encontraron registros");
-      }
-    } catch (error) {
-      console.error("Error al obtener el registro:", error);
-    }
-  }
 
   const obtenerRegistrosArduino = async () => {
     try {
@@ -77,6 +52,9 @@ export default function Index() {
   useEffect(() => {
     crearTabla();
     // obtenerRegistrosArduino();
+    // obtenerPrimerRegistro();
+    obtenerTodosRegistros();
+    // vaciarTabla();
   }, []);
 
   return (

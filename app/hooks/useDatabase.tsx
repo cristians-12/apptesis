@@ -1,0 +1,60 @@
+import * as SQLite from "expo-sqlite";
+
+export default function useDatabase() {
+
+    const db = SQLite.openDatabaseAsync("registros.db");
+
+    const crearTabla = async () => {
+        (await db).execSync(
+            `
+          CREATE TABLE IF NOT EXISTS registros (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+              semana VARCHAR(50) NOT NULL
+            );
+          `
+        )
+    };
+
+    const guardarRegistro = async () => {
+        const statement = await (await db).prepareAsync(
+            'INSERT INTO registros (value, intValue) VALUES ($value, $intValue)'
+        );
+    }
+    const obtenerPrimerRegistro = async () => {
+        try {
+            const firstRow = await (await db).getFirstAsync('SELECT * FROM registros');
+            if (firstRow) {
+                console.log(firstRow.id, firstRow.timestamp, firstRow.semana);
+            } else {
+                console.log("No se encontraron registros");
+            }
+        } catch (error) {
+            console.error("Error al obtener el registro:", error);
+        }
+    }
+
+    const obtenerTodosRegistros = async () => {
+        console.log('Obteniendo todos los registros...');
+        const resultado = (await db).getAllAsync('SELECT * FROM registros');
+        console.log('Registros obtenidos:', await resultado);
+        return resultado;
+    }
+
+    const vaciarTabla = async () => {
+        try {
+            (await db).execSync('DELETE FROM registros;');
+            console.log('Tabla vaciada exitosamente.');
+        } catch (error) {
+            console.error('Error al vaciar la tabla:', error);
+        }
+    };
+
+    return {
+        crearTabla,
+        guardarRegistro,
+        obtenerPrimerRegistro,
+        obtenerTodosRegistros,
+        vaciarTabla
+    }
+}

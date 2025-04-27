@@ -3,6 +3,7 @@ import { Slot, SplashScreen } from "expo-router";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
+import { SQLiteProvider } from "expo-sqlite";
 
 // Evita que el splash desaparezca automáticamente
 SplashScreen.preventAutoHideAsync();
@@ -30,8 +31,10 @@ export default function RootLayout() {
   // 4) Una vez cargadas, renderizamos las pantallas
   //    y llamamos a onLayoutRootView para quitar el splash
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <Slot />
-    </View>
+    <SQLiteProvider databaseName="registros">
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <Slot />
+      </View>
+    </SQLiteProvider>
   );
 }
