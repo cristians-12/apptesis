@@ -2,6 +2,8 @@ import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import { useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
+import ModalManual from "./components/organisms/modals/ModalManual";
+import { url } from "./utils/constants";
 
 export default function Index() {
   const logoImage = require("./../assets/images/logofinal.png");
@@ -10,9 +12,8 @@ export default function Index() {
     data: "Aun no hay datos.",
     status: "false",
   });
+  const [modal, setModal] = useState(true);
   const [registros, setRegistros] = useState<[]>([]);
-
-  const url = "http://192.168.4.1";
 
   const db = SQLite.openDatabaseAsync("registros.db");
 
@@ -53,10 +54,8 @@ export default function Index() {
       const datos = await response.json();
       setMensaje(datos)
       console.log("Datos:", datos);
-
       // Alert.alert("Respuesta completa", JSON.stringify(data));
       // setMensaje({ status: "success", data: data.mensaje || JSON.stringify(data) });
-
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Hubo un error:", error);
@@ -67,6 +66,10 @@ export default function Index() {
         setMensaje({ status: "error", data: "Error desconocido" });
       }
     }
+  }
+
+  const handleCloseModal = () => {
+    setModal(false);
   }
 
   useEffect(() => {
@@ -84,6 +87,7 @@ export default function Index() {
       <TouchableOpacity style={styles.boton} onPress={obtenerRegistrosArduino}>
         <Text style={styles.textWhite}>Conectarse al panel</Text>
       </TouchableOpacity>
+      {modal && <ModalManual onPressClose={handleCloseModal} />}
     </View>
   );
 }

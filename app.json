@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "apptesis",
-    "slug": "apptesis",
+    "name": "dosifiapp",
+    "slug": "dosifiapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logofinal.png",
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icono.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.cristians12.apptesis"
