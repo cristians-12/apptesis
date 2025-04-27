@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
 import ModalManual from "./components/organisms/modals/ModalManual";
 import { url } from "./utils/constants";
+import BookIcon from "@/assets/icons/BookIcon";
+import { colors } from "./utils/colors";
 
 export default function Index() {
   const logoImage = require("./../assets/images/logofinal.png");
@@ -12,7 +14,7 @@ export default function Index() {
     data: "Aun no hay datos.",
     status: "false",
   });
-  const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
   const [registros, setRegistros] = useState<[]>([]);
 
   const db = SQLite.openDatabaseAsync("registros.db");
@@ -79,6 +81,9 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={() => setModal(true)} style={styles.btnManual}>
+        <BookIcon fill={colors.primary} />
+      </TouchableOpacity>
       <Image style={styles.image} source={logoImage} />
       <Text>Ver registros de dosificación</Text>
       <View style={styles.containerRegistros}>

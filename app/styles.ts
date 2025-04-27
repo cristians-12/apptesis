@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { colors } from "./utils/colors";
 
 export const styles = StyleSheet.create(
     {
@@ -6,6 +7,7 @@ export const styles = StyleSheet.create(
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
+            position: "relative",
         },
         image: {
             width: 150,
@@ -13,7 +15,7 @@ export const styles = StyleSheet.create(
             objectFit: 'contain'
         },
         boton: {
-            backgroundColor: 'blue',
+            backgroundColor: colors.primary,
             borderRadius: 20,
             paddingVertical: 10,
             marginTop: 20,
@@ -30,6 +32,16 @@ export const styles = StyleSheet.create(
             color: 'white',
             fontSize: 20,
             fontWeight: 'bold',
+        },
+        btnManual: {
+            // backgroundColor: colors.primary
+            borderWidth: 1,
+            borderColor: 'gray',
+            padding: 7,
+            borderRadius: 10,
+            position: 'absolute',
+            top: 30,
+            right: 30,
         }
     }
 )

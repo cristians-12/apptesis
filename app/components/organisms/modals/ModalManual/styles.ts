@@ -6,11 +6,13 @@ export const styles = StyleSheet.create({
         // flexDirection: "column",
         // justifyContent: "center",
         // alignItems: "center",
+
     },
     flex: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 18,
+        marginTop: 20,
     }
 })

@@ -8,7 +8,7 @@ interface Props {
 
 export default function ModalManual({ onPressClose }: Props) {
     return (
-        <Modal>
+        <Modal animationType="slide">
             <View style={styles.container}>
                 <View style={styles.flex}>
                     <Text>Manual de usuario</Text>
