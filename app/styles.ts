@@ -28,6 +28,8 @@ export const styles = StyleSheet.create(
             padding: 15,
             borderRadius: 10,
             marginTop: 20,
+            height: 300,
+            width: '90%',
         },
         textWhite: {
             color: 'white',

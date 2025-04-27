@@ -23,6 +23,13 @@ export default function ModalManual({ onPressClose }: Props) {
                         <Text style={styles.numbers}>1.</Text>
                         <Text style={styles.enums}>{' '}Verificar que el dispositivo este encendido.</Text>
                     </Text>
+                    <Text>
+                        <Text style={styles.numbers}>2.</Text>
+                        <Text style={styles.enums}>{' '}Conectarse a la red creada por el dispositivo.</Text>
+                    </Text><Text>
+                        <Text style={styles.numbers}>3.</Text>
+                        <Text style={styles.enums}>{' '}Verificar que el dispositivo este encendido.</Text>
+                    </Text>
                 </View>
             </View>
         </Modal>

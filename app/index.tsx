@@ -87,7 +87,7 @@ export default function Index() {
       <Image style={styles.image} source={logoImage} />
       <Text style={styles.text}>Ver registros de dosificación</Text>
       <View style={styles.containerRegistros}>
-        <Text>{mensaje.data}</Text>
+        <Text style={styles.text}>{mensaje.data}</Text>
       </View>
       <TouchableOpacity style={styles.boton} onPress={obtenerRegistrosArduino}>
         <Text style={styles.textWhite}>Conectarse al panel</Text>
