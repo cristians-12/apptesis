@@ -57,6 +57,12 @@ export const styles = StyleSheet.create(
             height: '100%',
             padding: 20,
             // backgroundColor: colors.white,
+        },
+        deleteTable: {
+            backgroundColor: 'red',
+            padding: 10,
+            borderRadius: 20,
+            marginTop: 20,
         }
     }
 )

@@ -5,11 +5,13 @@ export default function useDatabase() {
     const db = SQLite.openDatabaseAsync("registros.db");
 
     const crearTabla = async () => {
+        console.log('Creando tabla...');
         (await db).execSync(
             `
           CREATE TABLE IF NOT EXISTS registros (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                semana VARCHAR(50) NOT NULL
             );
           `
         )
@@ -54,11 +56,23 @@ export default function useDatabase() {
         }
     };
 
+    const eliminarRegistro = async (id: number) => {
+        try {
+            const result = (await db).execAsync(`
+                DELETE FROM registros WHERE id = ${id};
+            `);
+            console.log('Resultado de la inserción:', await result);
+        } catch (error) {
+            console.error('Error al eliminar el registro:', error);
+        }
+    }
+
     return {
         crearTabla,
         guardarRegistro,
         obtenerPrimerRegistro,
         obtenerTodosRegistros,
-        vaciarTabla
+        vaciarTabla,
+        eliminarRegistro
     }
 }

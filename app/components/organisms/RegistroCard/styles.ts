@@ -9,9 +9,17 @@ export const styles = StyleSheet.create(
             marginVertical: 10,
             padding: 10,
             borderRadius: 10,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
         },
         texto: {
             fontFamily: fontFamilies.MONTSERRAT.medium
+        },
+        delete:{
+            backgroundColor: "red",
+            padding: 5,
+            borderRadius: 5,
         }
     }
 )

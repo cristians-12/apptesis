@@ -31,7 +31,7 @@ export default function RootLayout() {
   // 4) Una vez cargadas, renderizamos las pantallas
   //    y llamamos a onLayoutRootView para quitar el splash
   return (
-    <SQLiteProvider databaseName="registros">
+    <SQLiteProvider databaseName="registros.db">
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <Slot />
       </View>

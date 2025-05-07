@@ -1,4 +1,4 @@
-import { Alert, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, ScrollView, Text, Touchable, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import { useEffect, useState } from "react";
 import ModalManual from "./components/organisms/modals/ModalManual";
@@ -8,6 +8,7 @@ import { colors } from "./utils/colors";
 import useDatabase from "./hooks/useDatabase";
 import { RegistroType } from "./types/semana";
 import RegistroCard from "./components/organisms/RegistroCard";
+import ModalConexion from "./components/organisms/modals/ModalConexion";
 
 export default function Index() {
   const logoImage = require("./../assets/images/logofinal.png");
@@ -16,18 +17,20 @@ export default function Index() {
     status: "false",
   });
   const [modal, setModal] = useState(false);
+  const [modal2, setModal2] = useState(false);
   const [registros, setRegistros] = useState<RegistroType[] | []>([]);
 
   const {
     crearTabla,
     guardarRegistro,
-    obtenerPrimerRegistro,
     obtenerTodosRegistros,
-    vaciarTabla } = useDatabase();
+    vaciarTabla,
+    eliminarRegistro
+  } = useDatabase();
 
   const obtenerRegistrosArduino = async () => {
     try {
-      const response = await fetch(url);
+      const response = await fetch(`${url}/data`);
       if (!response.ok) {
         throw new Error(`Error en la solicitud: ${response.status}`);
       }
@@ -53,16 +56,33 @@ export default function Index() {
   const handleCloseModal = () => {
     setModal(false);
   }
+  const handleConexion = () => {
+    obtenerRegistrosArduino();
+    setModal2(true);
+  }
+
+  const handleCloseModal2 = () => {
+    setModal2(false);
+  }
 
   const obtenerRegistrosyGuardar = async () => {
     const resultados = await obtenerTodosRegistros();
     setRegistros(resultados);
   }
 
+  const eliminarRegistroHandler = async (id: number) => {
+    await eliminarRegistro(id);
+    obtenerRegistrosyGuardar();
+  }
+
+  const vaciarTablaHandler = async () => {
+    vaciarTabla();
+    obtenerRegistrosyGuardar();
+  }
+
   useEffect(() => {
     crearTabla();
     obtenerRegistrosyGuardar();
-    // vaciarTabla();
   }, []);
 
   return (
@@ -78,7 +98,7 @@ export default function Index() {
             (
 
               registros.map((registro) => (
-                <RegistroCard key={registro.id} fecha={registro.timestamp} semana={registro.semana} />
+                <RegistroCard onPressDelete={() => eliminarRegistroHandler(registro.id)} key={registro.id} fecha={registro.timestamp} semana={registro.semana} />
               ))
 
             )
@@ -87,16 +107,24 @@ export default function Index() {
               <Text style={styles.text}>No hay registros.</Text>
             )}
         </ScrollView>
-        <TouchableOpacity style={styles.boton} onPress={obtenerRegistrosArduino}>
+        <TouchableOpacity style={styles.boton} onPress={handleConexion}>
           <Text style={styles.textWhite}>Conectarse al panel</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.boton} onPress={() => guardarRegistro('2023-10-10')}>
+        <TouchableOpacity style={styles.boton} onPress={() => {
+          guardarRegistro('2023-10-10');
+          obtenerRegistrosyGuardar();
+        }}>
           <Text style={styles.textWhite}>Guardar registro</Text>
-        </TouchableOpacity>      <TouchableOpacity onPress={() => setModal(true)} style={styles.btnManual}>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setModal(true)} style={styles.btnManual}>
           <BookIcon fill={colors.primary} />
-        </TouchableOpacity>z
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.deleteTable} onPress={vaciarTablaHandler}>
+          <Text style={styles.textWhite}>Eliminar registros</Text>
+        </TouchableOpacity>
       </ScrollView>
       {modal && <ModalManual onPressClose={handleCloseModal} />}
+      {modal2 && <ModalConexion onClose={handleCloseModal2} message={mensaje.data} />}
     </View>
   );
 }
