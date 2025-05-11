@@ -1,17 +1,20 @@
-import { Alert, Image, ScrollView, Text, Touchable, TouchableOpacity, View } from "react-native";
+import { Alert, Image, ScrollView, Text, Touchable, TouchableOpacity, View, Platform } from "react-native";
 import { styles } from "./styles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ModalManual from "./components/organisms/modals/ModalManual";
 import { url } from "./utils/constants";
-import BookIcon from "@/assets/icons/BookIcon";
 import { colors } from "./utils/colors";
 import useDatabase from "./hooks/useDatabase";
 import { RegistroType } from "./types/semana";
-import RegistroCard from "./components/organisms/RegistroCard";
 import ModalConexion from "./components/organisms/modals/ModalConexion";
+import * as Notifications from 'expo-notifications';
+import RegistersContainer from "./components/organisms/RegistersContainer";
+import useNotifications from "./hooks/useNotifications";
+import BookIcon from "./assets/icons/BookIcon";
+import useWebSocket from "./hooks/useWebsocket";
 
 export default function Index() {
-  const logoImage = require("./../assets/images/logofinal.png");
+  const logoImage = require("./assets/images/logofinal.png");
   const [mensaje, setMensaje] = useState<{ status: string; data: string }>({
     data: "Aun no hay datos.",
     status: "false",
@@ -20,6 +23,9 @@ export default function Index() {
   const [modal2, setModal2] = useState(false);
   const [registros, setRegistros] = useState<RegistroType[] | []>([]);
 
+  const { sendLocalNotification } = useNotifications()
+  const { connectWebSocket, disconnectWebSocket, message } = useWebSocket(sendLocalNotification);
+
   const {
     crearTabla,
     guardarRegistro,
@@ -27,6 +33,7 @@ export default function Index() {
     vaciarTabla,
     eliminarRegistro
   } = useDatabase();
+
 
   const obtenerRegistrosArduino = async () => {
     try {
@@ -90,26 +97,17 @@ export default function Index() {
       <ScrollView style={styles.scrollContainer} horizontal={false}>
         <TouchableOpacity onPress={() => setModal(true)} style={styles.btnManual}>
           <BookIcon fill={colors.primary} />
+          {/* <Text>Manual</Text> */}
         </TouchableOpacity>
         <Image style={styles.image} source={logoImage} />
-        <Text style={{ ...styles.text, textAlign: 'center' }}>Registros de dosificación</Text>
-        <ScrollView style={styles.containerRegistros} horizontal={false} showsVerticalScrollIndicator={false}>
-          {registros.length > 0 ?
-            (
 
-              registros.map((registro) => (
-                <RegistroCard onPressDelete={() => eliminarRegistroHandler(registro.id)} key={registro.id} fecha={registro.timestamp} semana={registro.semana} />
-              ))
-
-            )
-            :
-            (
-              <Text style={styles.text}>No hay registros.</Text>
-            )}
-        </ScrollView>
-        <TouchableOpacity style={styles.boton} onPress={handleConexion}>
+        <RegistersContainer
+          registros={registros}
+          onPressCard={eliminarRegistroHandler}
+        />
+        {/* <TouchableOpacity style={styles.boton} onPress={handleConexion}>
           <Text style={styles.textWhite}>Conectarse al panel</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity style={styles.boton} onPress={() => {
           guardarRegistro('2023-10-10');
           obtenerRegistrosyGuardar();
@@ -118,13 +116,26 @@ export default function Index() {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setModal(true)} style={styles.btnManual}>
           <BookIcon fill={colors.primary} />
+          {/* <Text>Manual</Text> */}
         </TouchableOpacity>
         <TouchableOpacity style={styles.deleteTable} onPress={vaciarTablaHandler}>
           <Text style={styles.textWhite}>Eliminar registros</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.boton}
+          onPress={connectWebSocket} // Conectar al WebSocket
+        >
+          <Text style={styles.textWhite}>Conectarse al panel</Text>
+        </TouchableOpacity>
+        {/* <TouchableOpacity style={styles.deleteTable} onPress={() => sendLocalNotification('hola')}>
+          <Text style={styles.textWhite}>Enviar noti</Text>
+        </TouchableOpacity> */}
       </ScrollView>
       {modal && <ModalManual onPressClose={handleCloseModal} />}
       {modal2 && <ModalConexion onClose={handleCloseModal2} message={mensaje.data} />}
     </View>
   );
 }
+
+

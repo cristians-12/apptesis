@@ -4,16 +4,27 @@ import { useFonts } from "expo-font";
 import { useCallback, useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
 import { SQLiteProvider } from "expo-sqlite";
+import * as Notifications from 'expo-notifications';
 
 // Evita que el splash desaparezca automáticamente
 SplashScreen.preventAutoHideAsync();
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
 export default function RootLayout() {
   // 1) Carga las fuentes
   const [fontsLoaded] = useFonts({
-    MontserratLight: require("../assets/fonts/Montserrat-Light.ttf"),
-    MontserratMedium: require("../assets/fonts/Montserrat-Medium.ttf"),
-    MontserratBold: require("../assets/fonts/Montserrat-Bold.ttf"),
+    MontserratLight: require("./assets/fonts/Montserrat-Light.ttf"),
+    MontserratMedium: require("./assets/fonts/Montserrat-Medium.ttf"),
+    MontserratBold: require("./assets/fonts/Montserrat-Bold.ttf"),
   });
 
   // 2) Cuando fontsLoaded cambie a true, ocultamos el splash

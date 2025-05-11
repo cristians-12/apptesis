@@ -1,6 +1,6 @@
 import { Text, Touchable, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
-import CloseIcon from "@/assets/icons/CloseIcon";
+import CloseIcon from "@/app/assets/icons/CloseIcon";
 
 interface Props {
     semana: string;
@@ -21,6 +21,7 @@ export default function RegistroCard({ fecha, semana, onPressDelete }: Props) {
             </View>
             <TouchableOpacity onPress={onPressDelete} style={styles.delete}>
                 <CloseIcon fill="white" />
+                {/* <Text>x</Text> */}
             </TouchableOpacity>
         </View>
     )

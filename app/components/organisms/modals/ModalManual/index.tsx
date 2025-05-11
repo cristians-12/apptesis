@@ -1,7 +1,7 @@
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
-import CloseIcon from "@/assets/icons/CloseIcon";
 import { colors } from "@/app/utils/colors";
+import CloseIcon from "@/app/assets/icons/CloseIcon";
 
 interface Props {
     onPressClose: () => void;
@@ -16,6 +16,7 @@ export default function ModalManual({ onPressClose }: Props) {
                     <Text style={styles.text}>Manual de usuario</Text>
                     <TouchableOpacity onPress={onPressClose}>
                         <CloseIcon fill={colors.primary} width={30} />
+                        {/* <Text>x</Text> */}
                     </TouchableOpacity>
                 </View>
                 <View style={styles.container2}>
