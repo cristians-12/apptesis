@@ -6,61 +6,96 @@ import useNotifications from "@/app/hooks/useNotifications";
 import Toast from "react-native-toast-message";
 import { styles } from "./styles";
 import { useFocusEffect } from "@react-navigation/native";
+import DropDownPicker from "react-native-dropdown-picker"; // <-- Agrega esta línea
 
 export default function ScheduleRegisterScreen() {
-    const [date, setDate] = useState(new Date());
-    const [show, setShow] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
 
-    const { sendLocalNotification } = useNotifications();
+  // Estado para el dropdown
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([
+    { label: "Semana 1", value: "semana1" },
+    { label: "Semana 2", value: "semana2" },
+    { label: "Semana 3", value: "semana3" },
+    { label: "Semana 4", value: "semana4" },
+    { label: "Semana 5", value: "semana5" },
+  ]);
 
-    const { sendMessage, connectWebSocket, disconnectWebSocket } = useWebSocket({ sendLocalNotification });
+  const { sendLocalNotification } = useNotifications();
 
-    const onChange = (event: any, selectedDate?: Date) => {
-        const currentDate = selectedDate || date;
-        setShow(Platform.OS === "ios"); // Mantén el picker abierto en iOS
-        setDate(currentDate); // Actualiza la fecha seleccionada
-    };
+  const { sendMessage, connectWebSocket, disconnectWebSocket } = useWebSocket({
+    sendLocalNotification,
+  });
 
-    const showDatePicker = () => {
-        setShow(true); // Muestra el selector de fecha
-    };
+  const onChange = (event: any, selectedDate?: Date) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === "ios");
+    setDate(currentDate);
+  };
 
-    const enviarFecha = () => {
-        sendMessage({
-            fecha: date.toLocaleDateString('es-ES'),
-        });
-        Toast.show(
-            {
-                type: 'info',
-                text1: 'Programando dosificacion..',
-                text2: 'Espera unos segundos.. ⌚'
-            }
-        );
-    };
+  const showDatePicker = () => {
+    setShow(true);
+  };
 
-    useFocusEffect(
-        useCallback(() => {
-            connectWebSocket();
-            return () => disconnectWebSocket();
-        }, [connectWebSocket, disconnectWebSocket])
-    )
+  const enviarFecha = () => {
+    sendMessage({
+      fecha: date.toLocaleDateString("es-ES"),
+      semana: value, // Envía la semana seleccionada
+    });
+    Toast.show({
+      type: "info",
+      text1: "Programando dosificacion..",
+      text2: "Espera unos segundos.. ⌚",
+    });
+  };
 
-    return (
-        <View style={styles.container}>
+  const enviarDosificacion = () => {
+    sendMessage({
+      semana: value,
+    });
+    Toast.show({
+      type: "success",
+      text1: "Enviando dosificacion..",
+      text2: "Espera unos segundos.. ⌚",
+    });
+  };
 
-            <Text style={{ marginBottom: 20 }}>Fecha seleccionada: {date.toLocaleDateString('es-ES')}</Text>
-            <Button title="Seleccionar fecha" onPress={showDatePicker} />
-            {show && (
-                <>
-                    <DateTimePicker
-                        value={date}
-                        mode="date"
-                        display="default"
-                        onChange={onChange}
-                    />
-                </>
-            )}
-            <Button title="Enviar fecha" onPress={enviarFecha} />
-        </View>
-    );
+  useFocusEffect(
+    useCallback(() => {
+      connectWebSocket();
+      return () => disconnectWebSocket();
+    }, [connectWebSocket, disconnectWebSocket])
+  );
+
+  return (
+    <View style={styles.container}>
+      <Text style={{ marginBottom: 20 }}>
+        Fecha seleccionada: {date.toLocaleDateString("es-ES")}
+      </Text>
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+        placeholder="Selecciona una semana"
+        style={{ marginBottom: 20 }}
+      />
+      {/* <Button title="Seleccionar fecha" onPress={showDatePicker} /> */}
+      {show && (
+        <>
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="default"
+            onChange={onChange}
+          />
+        </>
+      )}
+      {value && <Button title="Enviar dosificacion" onPress={enviarDosificacion} />}
+    </View>
+  );
 }
