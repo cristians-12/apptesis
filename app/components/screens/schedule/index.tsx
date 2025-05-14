@@ -47,7 +47,7 @@ export default function ScheduleRegisterScreen() {
     Toast.show({
       type: "info",
       text1: "Programando dosificacion..",
-      text2: "Espera unos segundos.. ⌚",
+      text2: "Espera unos segundos ⌚",
     });
   };
 
