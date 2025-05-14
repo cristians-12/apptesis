@@ -20,6 +20,7 @@ import { colors } from "@/app/utils/colors";
 import BookIcon from "@/app/assets/icons/BookIcon";
 import RegistersContainer from "../../organisms/RegistersContainer";
 import ModalManual from "../../organisms/modals/ModalManual";
+import Toast from "react-native-toast-message";
 
 export default function Home() {
   const logoImage = require("../../../assets/images/logofinal.png");
@@ -93,15 +94,24 @@ export default function Home() {
 
   useEffect(() => {
     if (message) {
-      const guardarYActualizar = async () => {
         const parsedMessage = JSON.parse(message);
+        Toast.show(
+            {
+                type: "info",
+                text1: "Mensaje recibido",
+                text2: parsedMessage.data,
+            }
+        )
+      const guardarYActualizar = async () => {
         console.log("Mensaje recibido:", parsedMessage);
-        await guardarRegistro(parsedMessage.fecha, parsedMessage.semana);
+        await guardarRegistro(parsedMessage.data);
         await obtenerRegistrosyGuardar();
       };
       guardarYActualizar();
     }
   }, [message]);
+
+
 
   return (
     <View style={styles.container}>
