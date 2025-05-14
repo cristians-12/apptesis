@@ -1,12 +1,17 @@
-// app/_layout.tsx
-import { Slot, SplashScreen } from "expo-router";
-import { useFonts } from "expo-font";
-import { useCallback, useEffect } from "react";
-import { View, ActivityIndicator } from "react-native";
+// App.js
+import React, { useCallback } from "react";
+import { View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as SplashScreen from "expo-splash-screen";
+import * as Font from 'expo-font';
+import { useFonts } from 'expo-font';
 import { SQLiteProvider } from "expo-sqlite";
 import * as Notifications from 'expo-notifications';
+import Toast from "react-native-toast-message";
+import Home from "./components/screens/home";
+import BottomTabs from "./components/BottomTabs";
 
-// Evita que el splash desaparezca automáticamente
 SplashScreen.preventAutoHideAsync();
 
 Notifications.setNotificationHandler({
@@ -19,33 +24,37 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default function RootLayout() {
-  // 1) Carga las fuentes
+const Stack = createNativeStackNavigator();
+
+export default function App() {
   const [fontsLoaded] = useFonts({
-    MontserratLight: require("./assets/fonts/Montserrat-Light.ttf"),
-    MontserratMedium: require("./assets/fonts/Montserrat-Medium.ttf"),
-    MontserratBold: require("./assets/fonts/Montserrat-Bold.ttf"),
+    MontserratLight: require('./assets/fonts/Montserrat-Light.ttf'),
+    MontserratMedium: require('./assets/fonts/Montserrat-Medium.ttf'),
+    MontserratBold: require('./assets/fonts/Montserrat-Bold.ttf'),
   });
 
-  // 2) Cuando fontsLoaded cambie a true, ocultamos el splash
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
-  // 3) Mientras no estén listas las fuentes, devolvemos null (la pantalla sigue en splash)
   if (!fontsLoaded) {
+    // Mientras cargan las fuentes, manten splash
     return null;
   }
 
-  // 4) Una vez cargadas, renderizamos las pantallas
-  //    y llamamos a onLayoutRootView para quitar el splash
   return (
     <SQLiteProvider databaseName="registros.db">
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <Slot />
+        <NavigationContainer>
+          {/* <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+          </Stack.Navigator> */}
+          <BottomTabs />
+        </NavigationContainer>
       </View>
+      <Toast />
     </SQLiteProvider>
   );
 }

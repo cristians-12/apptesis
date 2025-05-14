@@ -19,7 +19,6 @@
     },
     "web": {
       "bundler": "metro",
-      "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "splash": {
@@ -28,7 +27,6 @@
       "backgroundColor": "#ffffff"
     },
     "plugins": [
-      "expo-router",
       [
         "expo-splash-screen",
         {
@@ -56,7 +54,6 @@
       ]
     ],
     "experiments": {
-      "typedRoutes": true
     },
     "extra": {
       "router": {
