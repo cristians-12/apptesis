@@ -48,7 +48,8 @@ const useWebSocket = ({
     ws.current.onmessage = (event) => {
       const receivedMessage = event.data;
       setMessage(receivedMessage);
-      sendLocalNotification(receivedMessage);
+      const jsonData = JSON.parse(receivedMessage);
+      sendLocalNotification(jsonData.data);
     };
 
     ws.current.onclose = () => {
