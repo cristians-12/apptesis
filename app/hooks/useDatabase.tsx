@@ -1,4 +1,5 @@
 import * as SQLite from "expo-sqlite";
+import { RegistroType } from "../types/semana";
 
 export default function useDatabase() {
 
@@ -11,25 +12,23 @@ export default function useDatabase() {
           CREATE TABLE IF NOT EXISTS registros (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                semana VARCHAR(50) NOT NULL
             );
           `
         )
     };
 
-    const guardarRegistro = async (fecha: string) => {
-        // const statement = await (await db).prepareAsync(
-        //     'INSERT INTO registros (value, intValue) VALUES ($value, $intValue)'
-        // );
+    const guardarRegistro = async (fecha: string, semana?:string) => {
         console.log('Guardando registro con fecha:', fecha);
         const result = (await db).execAsync(`
-            INSERT INTO registros (timestamp, semana) VALUES ('${fecha}', 'semana 1');
+            INSERT INTO registros (timestamp, semana) VALUES ('${fecha}');
             `)
         console.log('Resultado de la inserción:', await result);
     }
+
+
     const obtenerPrimerRegistro = async () => {
         try {
-            const firstRow = await (await db).getFirstAsync('SELECT * FROM registros');
+            const firstRow = await (await db).getFirstAsync<RegistroType>('SELECT * FROM registros');
             if (firstRow) {
                 console.log(firstRow.id, firstRow.timestamp, firstRow.semana);
             } else {
@@ -42,7 +41,7 @@ export default function useDatabase() {
 
     const obtenerTodosRegistros = async () => {
         console.log('Obteniendo todos los registros...');
-        const resultado = (await db).getAllAsync('SELECT * FROM registros');
+        const resultado = (await db).getAllAsync<RegistroType[]>('SELECT * FROM registros');
         console.log('Registros obtenidos:', await resultado);
         return resultado;
     }

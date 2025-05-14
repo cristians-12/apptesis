@@ -27,9 +27,14 @@ export default function ModalManual({ onPressClose }: Props) {
                     <Text>
                         <Text style={styles.numbers}>2.</Text>
                         <Text style={styles.enums}>{' '}Conectarse a la red creada por el dispositivo.</Text>
-                    </Text><Text>
+                    </Text>
+                    <Text>
                         <Text style={styles.numbers}>3.</Text>
-                        <Text style={styles.enums}>{' '}Verificar que el dispositivo este encendido.</Text>
+                        <Text style={styles.enums}>{' '}Debe conectarse al dispositivo desde la app tambien al presionar el boton de conectarse al panel.</Text>
+                    </Text>
+                    <Text>
+                        <Text style={styles.numbers}>4.</Text>
+                        <Text style={styles.enums}>{' '}Para programar una dosificación debe dirigirse a la segunda pestaña y seleccionar la semana para enviar la dosificación.</Text>
                     </Text>
                 </View>
             </View>

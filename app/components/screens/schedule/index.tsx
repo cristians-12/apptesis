@@ -7,6 +7,7 @@ import Toast from "react-native-toast-message";
 import { styles } from "./styles";
 import { useFocusEffect } from "@react-navigation/native";
 import DropDownPicker from "react-native-dropdown-picker"; // <-- Agrega esta línea
+import { fontFamilies } from "@/app/utils/fontfamily";
 
 export default function ScheduleRegisterScreen() {
   const [date, setDate] = useState(new Date());
@@ -71,9 +72,9 @@ export default function ScheduleRegisterScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={{ marginBottom: 20 }}>
+      {/* <Text style={{ marginBottom: 20 }}>
         Fecha seleccionada: {date.toLocaleDateString("es-ES")}
-      </Text>
+      </Text> */}
       <DropDownPicker
         open={open}
         value={value}
@@ -82,7 +83,12 @@ export default function ScheduleRegisterScreen() {
         setValue={setValue}
         setItems={setItems}
         placeholder="Selecciona una semana"
-        style={{ marginBottom: 20 }}
+        style={{ marginBottom: 20}}
+        containerStyle={{ marginHorizontal: 18 }}
+        theme="LIGHT"
+        textStyle={{fontFamily:fontFamilies.MONTSERRAT.medium}}
+        labelStyle={{fontFamily:fontFamilies.MONTSERRAT.medium}}
+
       />
       {/* <Button title="Seleccionar fecha" onPress={showDatePicker} /> */}
       {show && (
