@@ -99,7 +99,7 @@ export default function Home() {
             {
                 type: "info",
                 text1: "Mensaje recibido",
-                text2: parsedMessage.data,
+                text2: parsedMessage,
             }
         )
       const guardarYActualizar = async () => {
