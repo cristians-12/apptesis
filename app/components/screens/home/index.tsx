@@ -94,22 +94,30 @@ export default function Home() {
 
   useEffect(() => {
     if (message) {
+      try {
         const parsedMessage = JSON.parse(message);
-        Toast.show(
-            {
-                type: "info",
-                text1: "Mensaje recibido",
-                text2: parsedMessage,
-            }
-        )
-      const guardarYActualizar = async () => {
-        console.log("Mensaje recibido:", parsedMessage);
-        await guardarRegistro(parsedMessage.data);
-        await obtenerRegistrosyGuardar();
-      };
-      guardarYActualizar();
+        Toast.show({
+          type: "info",
+          text1: "Mensaje recibido",
+          text2: `Datos: ${parsedMessage.data}`,
+        });
+
+        const guardarYActualizar = async () => {
+          console.log("Mensaje recibido:", message);
+          await guardarRegistro(parsedMessage.data);
+          await obtenerRegistrosyGuardar();
+        };
+        guardarYActualizar();
+      } catch (error) {
+        console.error("Error al parsear el mensaje JSON:", error);
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "No se pudo procesar el mensaje recibido.",
+        });
+      }
     }
-  }, [message]);
+  }, [message,]);
 
 
 
@@ -133,11 +141,11 @@ export default function Home() {
           <Text style={styles.textWhite}>Conectarse al panel</Text>
         </TouchableOpacity> */}
         {/* <TouchableOpacity style={styles.boton} onPress={() => {
-                    guardarRegistro('2023-10-10');
-                    obtenerRegistrosyGuardar();
-                }}>
-                    <Text style={styles.textWhite}>Guardar registro</Text>
-                </TouchableOpacity> */}
+          guardarRegistro('2023-10-10');
+          obtenerRegistrosyGuardar();
+        }}>
+          <Text style={styles.textWhite}>Guardar registro</Text>
+        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => setModal(true)}
           style={styles.btnManual}
