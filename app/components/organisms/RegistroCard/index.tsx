@@ -1,4 +1,4 @@
-import { Text, Touchable, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import CloseIcon from "@/app/assets/icons/CloseIcon";
 
@@ -9,11 +9,17 @@ interface Props {
 }
 
 export default function RegistroCard({ fecha, semana, onPressDelete }: Props) {
+    // Dividir la cadena de fecha en fecha y hora usando el espacio como separador
+    const [fechaParte, horaParte] = fecha.split(' ');
+
     return (
         <View style={styles.container}>
             <View>
                 <Text style={styles.texto}>
-                    Fecha: {fecha}
+                    Fecha: {fechaParte}
+                </Text>
+                <Text style={styles.texto}>
+                    Hora: {horaParte || "No disponible"}
                 </Text>
                 <Text style={styles.texto}>
                     {semana}
@@ -24,5 +30,5 @@ export default function RegistroCard({ fecha, semana, onPressDelete }: Props) {
                 {/* <Text>x</Text> */}
             </TouchableOpacity>
         </View>
-    )
+    );
 }

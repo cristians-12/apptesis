@@ -17,7 +17,7 @@ export default function RegistersContainer({ registros, onPressCard }: Props) {
                     (
                         registros.map((registro) => (
                             <RegistroCard
-                                onPressDelete={() => onPressCard(registro.id)} // <-- LE PASAS EL ID!
+                                onPressDelete={() => onPressCard(registro.id)}
                                 key={registro.id}
                                 fecha={registro.timestamp}
                                 semana={registro.semana}

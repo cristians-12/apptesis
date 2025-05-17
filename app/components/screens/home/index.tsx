@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { styles } from "./styles";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as Notifications from "expo-notifications";
 import { RegistroType } from "@/app/types/semana";
 import useNotifications from "@/app/hooks/useNotifications";
@@ -21,6 +21,7 @@ import BookIcon from "@/app/assets/icons/BookIcon";
 import RegistersContainer from "../../organisms/RegistersContainer";
 import ModalManual from "../../organisms/modals/ModalManual";
 import Toast from "react-native-toast-message";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Home() {
   const logoImage = require("../../../assets/images/logofinal.png");
@@ -118,6 +119,13 @@ export default function Home() {
       }
     }
   }, [message,]);
+
+  useFocusEffect(
+    useCallback(() => {
+      connectWebSocket();
+      return () => disconnectWebSocket();
+    }, [connectWebSocket, disconnectWebSocket])
+  );
 
 
 
