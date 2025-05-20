@@ -9,6 +9,7 @@ import * as TaskManager from 'expo-task-manager';
 import Toast from "react-native-toast-message";
 import BottomTabs from "./components/BottomTabs";
 import Constants from 'expo-constants';
+import { WebSocketProvider } from "./context/WebsocketProvider";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -32,15 +33,13 @@ TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, async ({ data, error, execu
     return;
   }
   console.log("Tarea de fondo para notificaciones ejecutada con datos:", data);
-  // Aquí puedes procesar las notificaciones recibidas en segundo plano
   if (data) {
-    // Mostrar una notificación local basada en los datos recibidos (por ejemplo, datos push)
     await Notifications.scheduleNotificationAsync({
       content: {
         title: "Notificación desde Segundo Plano",
         body: data?.message || data?.data || JSON.stringify(data) || "Tienes una nueva notificación",
       },
-      trigger: null, // null significa mostrar de inmediato
+      trigger: null,
     });
   }
 });
@@ -58,7 +57,7 @@ export default function App() {
     }
   }, [fontsLoaded]);
 
-  // Solicita permisos, obtiene el token push y registra la tarea de fondo
+  // Solicita permisos y configura notificaciones
   useEffect(() => {
     const setupNotifications = async () => {
       try {
@@ -73,9 +72,7 @@ export default function App() {
           projectId: Constants.expoConfig?.extra?.eas?.projectId,
         });
         console.log("Token de notificación push:", token.data);
-    
 
-        // Registra la tarea de fondo para notificaciones
         await Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
         console.log("Tarea de fondo para notificaciones registrada:", BACKGROUND_NOTIFICATION_TASK);
       } catch (error) {
@@ -98,14 +95,31 @@ export default function App() {
     };
   }, []);
 
+  // Función para enviar notificaciones locales (pasada al WebSocketProvider)
+  const sendLocalNotification = (msg: string) => {
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Notificación Local",
+        body: msg,
+      },
+      trigger: null,
+    });
+  };
+
+  if (!fontsLoaded) {
+    return null; // Muestra pantalla de carga mientras se cargan las fuentes
+  }
+
   return (
     <SQLiteProvider databaseName="registros.db">
-      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <NavigationContainer>
-          <BottomTabs />
-        </NavigationContainer>
-      </View>
-      <Toast />
+      <WebSocketProvider sendLocalNotification={sendLocalNotification}>
+        <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+          <NavigationContainer>
+            <BottomTabs />
+          </NavigationContainer>
+        </View>
+        <Toast />
+      </WebSocketProvider>
     </SQLiteProvider>
   );
 }

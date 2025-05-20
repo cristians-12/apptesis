@@ -3,131 +3,59 @@ import {
   Image,
   ScrollView,
   Text,
-  Touchable,
   TouchableOpacity,
   View,
-  Platform,
 } from "react-native";
 import { styles } from "./styles";
-import { useCallback, useEffect, useRef, useState } from "react";
-import * as Notifications from "expo-notifications";
+import { useCallback, useEffect, useState } from "react";
 import { RegistroType } from "@/app/types/semana";
-import useNotifications from "@/app/hooks/useNotifications";
-import useWebSocket from "@/app/hooks/useWebsocket";
-import useDatabase from "@/app/hooks/useDatabase";
-import { url } from "@/app/utils/constants";
 import { colors } from "@/app/utils/colors";
 import BookIcon from "@/app/assets/icons/BookIcon";
 import RegistersContainer from "../../organisms/RegistersContainer";
 import ModalManual from "../../organisms/modals/ModalManual";
 import Toast from "react-native-toast-message";
-import { useFocusEffect } from "@react-navigation/native";
+import useDatabase from "@/app/hooks/useDatabase";
+import { useWebSocketContext } from "@/app/context/WebsocketProvider";
 
 export default function Home() {
   const logoImage = require("../../../assets/images/logofinal.png");
-  const [mensaje, setMensaje] = useState<{ status: string; data: string }>({
-    data: "Aun no hay datos.",
-    status: "false",
-  });
   const [modal, setModal] = useState(false);
-  const [registros, setRegistros] = useState<RegistroType[] | []>([]);
 
-  const { sendLocalNotification } = useNotifications();
-  const { connectWebSocket, disconnectWebSocket, message } = useWebSocket({
-    sendLocalNotification,
-  });
+  // Usar el contexto de WebSocketProvider
+  const { connectWebSocket, disconnectWebSocket, registros, isConnected } = useWebSocketContext();
 
   const {
     crearTabla,
-    guardarRegistro,
-    obtenerTodosRegistros,
     vaciarTabla,
     eliminarRegistro,
+    obtenerTodosRegistros,
   } = useDatabase();
 
-  const obtenerRegistrosArduino = async () => {
-    try {
-      const response = await fetch(`${url}/data`);
-      if (!response.ok) {
-        throw new Error(`Error en la solicitud: ${response.status}`);
-      }
-      const datos = await response.json();
-      setMensaje(datos);
-      console.log("Datos:", datos);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Hubo un error:", error);
-        setMensaje({ status: "error", data: error.message });
-      } else {
-        console.error("Error desconocido:", error);
-        Alert.alert("Error", "Ocurrió un error desconocido");
-        setMensaje({ status: "error", data: "Error desconocido" });
-      }
-    }
-  };
-
-  const handleCloseModal = () => {
-    setModal(false);
-  };
-  const handleConexion = () => {
-    obtenerRegistrosArduino();
-  };
-
   const obtenerRegistrosyGuardar = async () => {
+    // No es necesario actualizar manualmente los registros, ya lo hace el contexto
+    // Pero puedes usarlo si necesitas forzar una actualización manual
     const resultados = await obtenerTodosRegistros();
-    setRegistros(resultados);
+    // setRegistros(resultados); // No necesitas setRegistros porque ya lo provee el contexto
   };
 
   const eliminarRegistroHandler = async (id: number) => {
     await eliminarRegistro(id);
-    obtenerRegistrosyGuardar();
+    obtenerRegistrosyGuardar(); // Esto actualizará los registros en el contexto global
   };
 
   const vaciarTablaHandler = async () => {
-    vaciarTabla();
-    obtenerRegistrosyGuardar();
+    await vaciarTabla();
+    obtenerRegistrosyGuardar(); // Esto actualizará los registros en el contexto global
+  };
+
+  const handleCloseModal = () => {
+    setModal(false);
   };
 
   useEffect(() => {
     crearTabla();
     obtenerRegistrosyGuardar();
   }, []);
-
-  useEffect(() => {
-    if (message) {
-      try {
-        const parsedMessage = JSON.parse(message);
-        Toast.show({
-          type: "info",
-          text1: "Mensaje recibido",
-          text2: `Datos: ${parsedMessage.data}`,
-        });
-
-        const guardarYActualizar = async () => {
-          console.log("Mensaje recibido:", message);
-          await guardarRegistro(parsedMessage.data);
-          await obtenerRegistrosyGuardar();
-        };
-        guardarYActualizar();
-      } catch (error) {
-        console.error("Error al parsear el mensaje JSON:", error);
-        Toast.show({
-          type: "error",
-          text1: "Error",
-          text2: "No se pudo procesar el mensaje recibido.",
-        });
-      }
-    }
-  }, [message,]);
-
-  useFocusEffect(
-    useCallback(() => {
-      connectWebSocket();
-      return () => disconnectWebSocket();
-    }, [connectWebSocket, disconnectWebSocket])
-  );
-
-
 
   return (
     <View style={styles.container}>
@@ -137,29 +65,19 @@ export default function Home() {
           style={styles.btnManual}
         >
           <BookIcon fill={colors.primary} />
-          {/* <Text>Manual</Text> */}
         </TouchableOpacity>
         <Image style={styles.image} source={logoImage} />
 
+        {/* Usar los registros proporcionados por el contexto */}
         <RegistersContainer
           registros={registros}
           onPressCard={eliminarRegistroHandler}
         />
-        {/* <TouchableOpacity style={styles.boton} onPress={handleConexion}>
-          <Text style={styles.textWhite}>Conectarse al panel</Text>
-        </TouchableOpacity> */}
-        {/* <TouchableOpacity style={styles.boton} onPress={() => {
-          guardarRegistro('2023-10-10');
-          obtenerRegistrosyGuardar();
-        }}>
-          <Text style={styles.textWhite}>Guardar registro</Text>
-        </TouchableOpacity> */}
         <TouchableOpacity
           onPress={() => setModal(true)}
           style={styles.btnManual}
         >
           <BookIcon fill={colors.primary} />
-          {/* <Text>Manual</Text> */}
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.deleteTable}
@@ -169,14 +87,22 @@ export default function Home() {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.boton}
+          style={[styles.boton, !isConnected && { backgroundColor: "#808080" }]} // Gris si no está conectado
           onPress={connectWebSocket} // Conectar al WebSocket
         >
-          <Text style={styles.textWhite}>Conectarse al panel</Text>
+          <Text style={styles.textWhite}>
+            {isConnected ? "Conectado al panel" : "Conectarse al panel"}
+          </Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.deleteTable} onPress={() => sendLocalNotification('hola')}>
-          <Text style={styles.textWhite}>Enviar noti</Text>
-        </TouchableOpacity> */}
+
+        {/* {isConnected && (
+          <TouchableOpacity
+            style={[styles.boton, { backgroundColor: "#ff6347" }]} // Color diferente para desconectar
+            onPress={disconnectWebSocket} // Desconectar del WebSocket
+          >
+            <Text style={styles.textWhite}>Desconectarse del panel</Text>
+          </TouchableOpacity>
+        )} */}
       </ScrollView>
       {modal && <ModalManual onPressClose={handleCloseModal} />}
     </View>
