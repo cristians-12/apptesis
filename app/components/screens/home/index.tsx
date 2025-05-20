@@ -22,30 +22,22 @@ export default function Home() {
   const [modal, setModal] = useState(false);
 
   // Usar el contexto de WebSocketProvider
-  const { connectWebSocket, disconnectWebSocket, registros, isConnected } = useWebSocketContext();
+  const { connectWebSocket, disconnectWebSocket, registros, isConnected, obtenerRegistrosyGuardar } = useWebSocketContext();
 
   const {
     crearTabla,
     vaciarTabla,
     eliminarRegistro,
-    obtenerTodosRegistros,
   } = useDatabase();
-
-  const obtenerRegistrosyGuardar = async () => {
-    // No es necesario actualizar manualmente los registros, ya lo hace el contexto
-    // Pero puedes usarlo si necesitas forzar una actualización manual
-    const resultados = await obtenerTodosRegistros();
-    // setRegistros(resultados); // No necesitas setRegistros porque ya lo provee el contexto
-  };
 
   const eliminarRegistroHandler = async (id: number) => {
     await eliminarRegistro(id);
-    obtenerRegistrosyGuardar(); // Esto actualizará los registros en el contexto global
+    obtenerRegistrosyGuardar(); 
   };
 
   const vaciarTablaHandler = async () => {
     await vaciarTabla();
-    obtenerRegistrosyGuardar(); // Esto actualizará los registros en el contexto global
+    obtenerRegistrosyGuardar();
   };
 
   const handleCloseModal = () => {

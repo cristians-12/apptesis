@@ -1,10 +1,9 @@
 import React, { createContext, useContext, useEffect, useCallback, useState, useRef } from "react";
-import { WebSocket } from "ws"; // Nota: En React Native, WebSocket está disponible de forma nativa
 import Toast from "react-native-toast-message";
 import useDatabase from "@/app/hooks/useDatabase"; // Ajusta la ruta según tu estructura
 import { RegistroType } from "@/app/types/semana"; // Ajusta la ruta según tu estructura
 
-// Definir el tipo del contexto
+
 interface WebSocketContextType {
     message: string | undefined;
     connectWebSocket: () => void;
@@ -12,6 +11,8 @@ interface WebSocketContextType {
     sendMessage: (obj: any) => void;
     registros: RegistroType[] | [];
     isConnected: boolean; // Para indicar si el WebSocket está conectado
+    vaciarTablaHandler: () => void;
+    obtenerRegistrosyGuardar: ()=>void;
 }
 
 // Crear el contexto
@@ -39,22 +40,22 @@ export const WebSocketProvider = ({
     const [registros, setRegistros] = useState<RegistroType[] | []>([]);
     const [isConnected, setIsConnected] = useState<boolean>(false);
 
-    // Hooks de base de datos
     const {
         crearTabla,
         guardarRegistro,
         obtenerTodosRegistros,
+        vaciarTabla,
+        eliminarRegistro
     } = useDatabase();
 
-    // Inicializar la base de datos al montar el proveedor
     useEffect(() => {
         crearTabla();
         obtenerRegistrosyGuardar();
     }, []);
 
-    // Función para actualizar los registros desde la base de datos
     const obtenerRegistrosyGuardar = async () => {
         try {
+            console.log('obteniendo')
             const resultados = await obtenerTodosRegistros();
             setRegistros(resultados);
         } catch (error) {
@@ -62,7 +63,12 @@ export const WebSocketProvider = ({
         }
     };
 
-    // Manejar mensajes recibidos del WebSocket
+    const vaciarTablaHandler = async () => {
+        vaciarTabla();
+        obtenerRegistrosyGuardar();
+    }
+
+
     useEffect(() => {
         if (message) {
             try {
@@ -99,7 +105,6 @@ export const WebSocketProvider = ({
         }
     }, [message, sendLocalNotification]);
 
-    // Conectar al WebSocket
     const connectWebSocket = useCallback(() => {
         if (ws.current) {
             ws.current.close();
@@ -166,7 +171,6 @@ export const WebSocketProvider = ({
         }
     }, []);
 
-    // Enviar un mensaje al WebSocket
     const sendMessage = useCallback((obj: any) => {
         console.log("Enviando mensaje:", JSON.stringify(obj));
         if (ws.current && ws.current.readyState === WebSocket.OPEN) {
@@ -185,7 +189,6 @@ export const WebSocketProvider = ({
         }
     }, []);
 
-    // Intentar reconectar automáticamente si la conexión falla (opcional)
     useEffect(() => {
         let reconnectInterval: NodeJS.Timeout | null = null;
         if (!isConnected) {
@@ -221,6 +224,8 @@ export const WebSocketProvider = ({
                 sendMessage,
                 registros,
                 isConnected,
+                vaciarTablaHandler,
+                obtenerRegistrosyGuardar
             }}
         >
             {children}

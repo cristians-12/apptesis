@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "dosifiapp",
-    "slug": "dosifiapp",
+    "name": "apptesis",
+    "slug": "apptesis",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/logofinal.png",
