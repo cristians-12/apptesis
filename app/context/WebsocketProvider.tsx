@@ -95,14 +95,20 @@ export const WebSocketProvider = ({
           }`,
         });
 
-        // Guardar datos en la base de datos y actualizar el estado
         const guardarYActualizar = async () => {
           console.log("Mensaje recibido:", message);
-          // Asumiendo que el mensaje tiene un campo "data" con el contenido a guardar
-          const dataToSave =
-            parsedMessage.data || JSON.stringify(parsedMessage);
-          await guardarRegistro(dataToSave);
-          await obtenerRegistrosyGuardar();
+          const data = parsedMessage.data || parsedMessage;
+
+          if (data.cantidad !== undefined && data.semana !== undefined) {
+            const fecha = data.fecha || new Date().toISOString();
+            await guardarRegistro(fecha, data.cantidad, data.semana);
+            await obtenerRegistrosyGuardar();
+          } else {
+            console.log(
+              "Mensaje recibido no es un registro de consumo:",
+              parsedMessage
+            );
+          }
         };
         guardarYActualizar();
 
@@ -191,8 +197,13 @@ export const WebSocketProvider = ({
     }
   }, []);
 
+  const guardarRegistroYActualizar = useCallback((obj: any) => {
+    guardarRegistro(obj.fecha, obj.cantidad, obj.semana);
+    obtenerRegistrosyGuardar();
+  }, []);
+
   const sendMessage = useCallback((obj: any) => {
-    console.log("Enviando mensaje:", JSON.stringify(obj));
+    console.log("Enviando mensaje:", obj);
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       Toast.show({
         type: "info",
@@ -207,6 +218,7 @@ export const WebSocketProvider = ({
         text2: "No estás conectado al panel.",
       });
     }
+    guardarRegistroYActualizar(obj);
   }, []);
 
   useEffect(() => {
@@ -217,7 +229,7 @@ export const WebSocketProvider = ({
           console.log("Intentando reconectar al WebSocket...");
           connectWebSocket();
         }
-      }, 10000); // Reintentar cada 10 segundos
+      }, 5000); // Reintentar cada 10 segundos
     }
 
     return () => {

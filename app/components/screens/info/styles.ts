@@ -40,6 +40,13 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
     marginVertical: 10,
   },
+  title: {
+    fontFamily: fontFamilies.MONTSERRAT.bold,
+    fontSize: 24,
+    textAlign: "center",
+    color: colors.primary,
+    marginVertical: 20,
+  },
   yAxisLabel: {
     transform: [{ rotate: "-90deg" }],
     width: 100,

@@ -5,7 +5,7 @@ import { RegistroType } from "@/app/types/semana";
 
 interface Props {
     registros: RegistroType[];
-    onPressCard: (id: number) => void; // <-- acepta el id
+    onPressCard: (id: number) => void; 
 }
 
 export default function RegistersContainer({ registros, onPressCard }: Props) {
@@ -21,6 +21,7 @@ export default function RegistersContainer({ registros, onPressCard }: Props) {
                                 key={registro.id}
                                 fecha={registro.timestamp}
                                 semana={registro.semana}
+                                cantidad={registro.cantidad}
                             />
                         ))
                     )

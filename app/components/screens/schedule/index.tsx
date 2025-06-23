@@ -6,6 +6,7 @@ import { styles } from "./styles";
 import DropDownPicker from "react-native-dropdown-picker";
 import { fontFamilies } from "@/app/utils/fontfamily";
 import { useWebSocketContext } from "@/app/context/WebsocketProvider";
+import { TouchableOpacity } from "react-native";
 
 export default function ScheduleRegisterScreen() {
   const [date, setDate] = useState(new Date());
@@ -15,11 +16,11 @@ export default function ScheduleRegisterScreen() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-    { label: "Semana 1", value: 1 },
-    { label: "Semana 2", value: 2 },
-    { label: "Semana 3", value: 3 },
-    { label: "Semana 4", value: 4 },
-    { label: "Semana 5", value: 5 },
+    { label: "Semana 1 - 540gr", value: 1 },
+    { label: "Semana 2 - 715gr", value: 2 },
+    { label: "Semana 3 - 800gr", value: 3 },
+    { label: "Semana 4 - 1200gr", value: 4 },
+    { label: "Semana 5 - 1600gr", value: 5 },
   ]);
 
   // Usar el contexto de WebSocketProvider
@@ -56,6 +57,23 @@ export default function ScheduleRegisterScreen() {
     });
   };
 
+  const getCantidad = (value: number) => {
+    switch (value) {
+      case 1:
+        return 540;
+      case 2:
+        return 715;
+      case 3:
+        return 800;
+      case 4:
+        return 1200;
+      case 5:
+        return 1600;
+      default:
+        return 0;
+    }
+  };
+
   const enviarDosificacion = () => {
     if (!isConnected) {
       Toast.show({
@@ -78,6 +96,8 @@ export default function ScheduleRegisterScreen() {
     sendMessage({
       semana: value,
       dosificar: true,
+      fecha: date.toLocaleDateString("es-ES"),
+      cantidad: getCantidad(value),
     });
     Toast.show({
       type: "success",
@@ -111,15 +131,19 @@ export default function ScheduleRegisterScreen() {
         />
       )}
       {value && (
-        <>
-          {/* Botón para seleccionar fecha (opcional si lo necesitas) */}
-          {/* <Button title="Seleccionar fecha" onPress={showDatePicker} /> */}
-          {/* Botón para enviar dosificación */}
-          <Button title="Enviar dosificación" onPress={enviarDosificacion} />
-        </>
+        <TouchableOpacity onPress={enviarDosificacion} style={styles.boton}>
+          <Text style={styles.text}>Enviar dosificación</Text>
+        </TouchableOpacity>
       )}
       {!isConnected && (
-        <Text style={{ color: "red", textAlign: "center", marginTop: 10 }}>
+        <Text
+          style={{
+            color: "red",
+            textAlign: "center",
+            marginTop: 10,
+            fontFamily: fontFamilies.MONTSERRAT.medium,
+          }}
+        >
           No estás conectado al panel. Conéctate desde la pestaña Home.
         </Text>
       )}
