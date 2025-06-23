@@ -14,24 +14,41 @@ export default function useDatabase() {
         }
     };
 
-    // Crear la tabla de forma asíncrona
+    // Crear la tabla de registros
     const crearTabla = async () => {
-        console.log("Creando tabla...");
+        console.log("Creando tabla registros...");
         const db = await getDb();
         try {
             await db.execAsync(`
-        CREATE TABLE IF NOT EXISTS registros (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          timestamp TEXT DEFAULT CURRENT_TIMESTAMP
-        );
-      `);
+                CREATE TABLE IF NOT EXISTS registros (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+            `);
         } catch (error) {
-            console.error("Error al crear tabla:", error);
+            console.error("Error al crear tabla registros:", error);
             throw error;
         }
     };
 
-    // Guardar un registro
+    // Crear la tabla de programed_dosifications
+    const crearTabla2 = async () => {
+        console.log("Creando tabla programed_dosifications...");
+        const db = await getDb();
+        try {
+            await db.execAsync(`
+                CREATE TABLE IF NOT EXISTS programed_dosifications (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    timestamp TEXT DEFAULT CURRENT_TIMESTAMP
+                );
+            `);
+        } catch (error) {
+            console.error("Error al crear tabla programed_dosifications:", error);
+            throw error;
+        }
+    };
+
+    // Guardar un registro en la tabla registros
     const guardarRegistro = async (fecha: string, semana?: string) => {
         console.log("Guardando registro con fecha:", fecha);
         const db = await getDb();
@@ -48,13 +65,45 @@ export default function useDatabase() {
         }
     };
 
-    // Obtener el primer registro
-    const obtenerPrimerRegistro = async () => {
+    // Vaciar la tabla programed_dosifications
+    const vaciarTablaDosificaciones = async () => {
+        console.log("Vaciando tabla programed_dosifications...");
+        const db = await getDb();
+        try {
+            await db.execAsync("DELETE FROM programed_dosifications;");
+            console.log("Tabla programed_dosifications vaciada exitosamente.");
+        } catch (error) {
+            console.error("Error al vaciar la tabla programed_dosifications:", error);
+            throw error;
+        }
+    };
+
+    // Guardar un registro en programed_dosifications, vaciando la tabla primero
+    const guardarDosificacion = async (fecha: string) => {
+        const db = await getDb();
+        try {
+            // Vaciar la tabla antes de insertar
+            await vaciarTablaDosificaciones();
+            // Insertar el nuevo registro
+            const result = await db.runAsync(
+                `INSERT INTO programed_dosifications (timestamp) VALUES (?);`,
+                [fecha]
+            );
+            console.log("Dosificación insertada, ID:", result.lastInsertRowId);
+            return result;
+        } catch (error) {
+            console.error("Error al insertar dosificación:", error);
+            throw error;
+        }
+    };
+
+    // Obtener el primer registro de programed_dosifications
+    const obtenerDosificacionProgramada = async () => {
         console.log("Obteniendo primer registro...");
         const db = await getDb();
         try {
-            const firstRow = await db.getFirstAsync<RegistroType>(
-                "SELECT * FROM registros"
+            const firstRow = await db.getFirstAsync<{ id: number; timestamp: Date }>(
+                "SELECT * FROM programed_dosifications"
             );
             if (firstRow) {
                 console.log(firstRow.id, firstRow.timestamp);
@@ -68,7 +117,7 @@ export default function useDatabase() {
         }
     };
 
-    // Obtener todos los registros
+    // Obtener todos los registros de la tabla registros
     const obtenerTodosRegistros = async () => {
         console.log("Obteniendo todos los registros...");
         const db = await getDb();
@@ -84,20 +133,20 @@ export default function useDatabase() {
         }
     };
 
-    // Vaciar la tabla
+    // Vaciar la tabla registros
     const vaciarTabla = async () => {
-        console.log("Vaciando tabla...");
+        console.log("Vaciando tabla registros...");
         const db = await getDb();
         try {
             await db.execAsync("DELETE FROM registros;");
-            console.log("Tabla vaciada exitosamente.");
+            console.log("Tabla registros vaciada exitosamente.");
         } catch (error) {
-            console.error("Error al vaciar la tabla:", error);
+            console.error("Error al vaciar la tabla registros:", error);
             throw error;
         }
     };
 
-    // Eliminar un registro por ID
+    // Eliminar un registro por ID de la tabla registros
     const eliminarRegistro = async (id: number) => {
         console.log("Eliminando registro con ID:", id);
         const db = await getDb();
@@ -116,10 +165,12 @@ export default function useDatabase() {
 
     return {
         crearTabla,
+        crearTabla2,
         guardarRegistro,
-        obtenerPrimerRegistro,
+        guardarDosificacion,
+        obtenerDosificacionProgramada,
         obtenerTodosRegistros,
         vaciarTabla,
-        eliminarRegistro,
+        eliminarRegistro
     };
 }

@@ -38,5 +38,8 @@ export const styles = StyleSheet.create({
         fontFamily: fontFamilies.MONTSERRAT.medium,
         color: 'black',
         fontSize: 15,
+    },
+    bold: {
+        fontFamily: fontFamilies.MONTSERRAT.bold
     }
 })
