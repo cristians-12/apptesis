@@ -239,6 +239,15 @@ export const WebSocketProvider = ({
     };
   }, [isConnected, connectWebSocket]);
 
+  useEffect(() => {
+    const diaHoy = new Date().toLocaleDateString("es-ES", {
+      day: "2-digit",
+    });
+    if (diaHoy === "30") {
+      vaciarTablaHandler();
+    }
+  }, [dosificacion]);
+
   // Conectar automáticamente al iniciar la app (opcional)
   useEffect(() => {
     connectWebSocket();

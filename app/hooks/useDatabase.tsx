@@ -158,7 +158,6 @@ export default function useDatabase() {
 
   // Vaciar la tabla registros
   const vaciarTabla = async () => {
-    console.log("Vaciando tabla registros...");
     const db = await getDb();
     try {
       await db.execAsync("DELETE FROM consumo_diario;");
