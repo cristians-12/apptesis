@@ -137,7 +137,6 @@ export const WebSocketProvider = ({
       setIsConnected(false);
     }
 
-    // Reemplaza la URL con la dirección de tu servidor WebSocket (por ejemplo, el de tu Arduino)
     ws.current = new WebSocket("ws://192.168.4.1/");
 
     Toast.show({

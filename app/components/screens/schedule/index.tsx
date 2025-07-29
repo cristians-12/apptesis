@@ -16,11 +16,11 @@ export default function ScheduleRegisterScreen() {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
-    { label: "Semana 1 - 540gr", value: 1 },
-    { label: "Semana 2 - 715gr", value: 2 },
-    { label: "Semana 3 - 800gr", value: 3 },
-    { label: "Semana 4 - 1200gr", value: 4 },
-    { label: "Semana 5 - 1600gr", value: 5 },
+    { label: "Semana 1 - 4,1Kg", value: 1 },
+    { label: "Semana 2 - 5,7Kg", value: 2 },
+    { label: "Semana 3 - 6,43Kg", value: 3 },
+    { label: "Semana 4 - 7,14Kg", value: 4 },
+    { label: "Semana 5 - 9,43Kg", value: 5 },
   ]);
 
   // Usar el contexto de WebSocketProvider
@@ -60,15 +60,15 @@ export default function ScheduleRegisterScreen() {
   const getCantidad = (value: number) => {
     switch (value) {
       case 1:
-        return 540;
+        return 4.29;
       case 2:
-        return 715;
+        return 5.71;
       case 3:
-        return 800;
+        return 6.43;
       case 4:
-        return 1200;
+        return 7.14;
       case 5:
-        return 1600;
+        return 9.43;
       default:
         return 0;
     }

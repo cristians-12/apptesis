@@ -18,7 +18,7 @@ import useDatabase from "@/app/hooks/useDatabase";
 import { colors } from "@/app/utils/colors";
 
 export default function DateScheduleScreen() {
-  const { isConnected, dosificacion } = useWebSocketContext();
+  const { isConnected, dosificacion, sendMessage } = useWebSocketContext();
   const { guardarDosificacion, obtenerDosificacionProgramada, crearTabla2 } =
     useDatabase();
   // Initialize date with a Date object based on dosificacion (string) or current date
@@ -76,6 +76,17 @@ export default function DateScheduleScreen() {
           const newDosificacion = await obtenerDosificacionProgramada();
           console.log("Dosificación guardada:", newDosificacion);
           setLocalDosificacion(newDosificacion);
+
+          if (isConnected) {
+            sendMessage({
+              setFechaProgramada: true,
+              anio: currentDate.getFullYear(),
+              mes: currentDate.getMonth() + 1,
+              dia: currentDate.getDate(),
+              hora: 0,    // hora y minuto igual, pero envíalos para compatibilidad
+              minuto: 0,
+            });
+          }
         } catch (error) {
           console.error("Error al guardar dosificación:", error);
         }
@@ -84,18 +95,28 @@ export default function DateScheduleScreen() {
         setShow(false);
       }
     } else {
+      // iOS branch (idéntico básicamente)
       const currentDate = selectedDate || date;
       const formattedDate = formatDate(currentDate);
-      console.log("Guardando fecha:", formattedDate);
+
       setShow(false);
       setDate(currentDate);
+
       try {
         await guardarDosificacion(formattedDate);
         const newDosificacion = await obtenerDosificacionProgramada();
-        console.log("Dosificación guardada:", newDosificacion);
         setLocalDosificacion(newDosificacion);
+        if (isConnected) {
+          sendMessage({
+            setFechaProgramada: true,
+            anio: currentDate.getFullYear(),
+            mes: currentDate.getMonth() + 1,
+            dia: currentDate.getDate(),
+            hora: 0,
+            minuto: 0,
+          });
+        }
       } catch (error) {
-        // Fixed: Changed 'else' to 'catch'
         console.error("Error al guardar dosificación:", error);
       }
     }
@@ -120,9 +141,6 @@ export default function DateScheduleScreen() {
           year: "numeric",
         })}
       </Text>
-      {/* :
-                    <Text style={styles.text}>Aun no cuentas con una fecha de inicio seleccionada.</Text>
-            } */}
       {isConnected ? (
         <TouchableOpacity onPress={() => setShow(true)} style={styles.boton}>
           <Text style={styles.text}>Programar dosificación</Text>
@@ -141,19 +159,6 @@ export default function DateScheduleScreen() {
           onChange={onChange}
         />
       )}
-      {/* <PieChart
-                data={[
-                    { value: 40, color: "#4CAF50", text: "Verde" },
-                    { value: 30, color: "#2196F3", text: "Azul" },
-                    { value: 20, color: "#FFC107", text: "Amarillo" },
-                    { value: 10, color: "#F44336", text: "Rojo" },
-                ]}
-                strokeWidth={0}
-                innerCircleBorderWidth={0}
-                innerRadius={60}
-                donut
-                radius={70}
-            /> */}
     </SafeAreaView>
   );
 }
