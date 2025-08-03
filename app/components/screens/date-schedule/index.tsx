@@ -131,8 +131,7 @@ export default function DateScheduleScreen() {
       {/* {
                 dosificacion && date ? */}
       <Text style={styles.text}>
-        Fecha de inicio seleccionada:{" "}
-        {date.toLocaleDateString() || "No hay fecha seleccionada"}
+        Fecha de inicio seleccionada:
       </Text>
       <Text style={styles.text}>
         {date.toLocaleDateString("es-ES", {

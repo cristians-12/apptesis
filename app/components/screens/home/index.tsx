@@ -16,6 +16,7 @@ import ModalManual from "../../organisms/modals/ModalManual";
 import Toast from "react-native-toast-message";
 import useDatabase from "@/app/hooks/useDatabase";
 import { useWebSocketContext } from "@/app/context/WebsocketProvider";
+import useServo from "@/app/hooks/useServo";
 
 export default function Home() {
   const logoImage = require("../../../assets/images/logofinal.png");
@@ -30,9 +31,11 @@ export default function Home() {
     eliminarRegistro,
   } = useDatabase();
 
+  const { detenerServo } = useServo();
+
   const eliminarRegistroHandler = async (id: number) => {
     await eliminarRegistro(id);
-    obtenerRegistrosyGuardar(); 
+    obtenerRegistrosyGuardar();
   };
 
   const vaciarTablaHandler = async () => {
@@ -71,19 +74,27 @@ export default function Home() {
         >
           <BookIcon fill={colors.primary} />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.deleteTable}
-          onPress={vaciarTablaHandler}
-        >
-          <Text style={styles.textWhite}>Eliminar registros</Text>
-        </TouchableOpacity>
+        {
+          registros.length > 0 && <TouchableOpacity
+            style={styles.deleteTable}
+            onPress={vaciarTablaHandler}
+          >
+            <Text style={styles.textWhite}>Eliminar registros</Text>
+          </TouchableOpacity>
+        }
 
         <TouchableOpacity
-          style={[styles.boton, !isConnected && { backgroundColor: "#808080" }]} // Gris si no está conectado
+          style={[styles.boton, !isConnected && { backgroundColor: "#808080" }]}
           onPress={connectWebSocket} // Conectar al WebSocket
         >
           <Text style={styles.textWhite}>
             {isConnected ? "Conectado al panel" : "Conectarse al panel"}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={detenerServo} style={styles.boton}>
+          <Text style={styles.textWhite}>
+            Detener dosificacion
           </Text>
         </TouchableOpacity>
 

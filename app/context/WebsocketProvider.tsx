@@ -136,7 +136,7 @@ export const WebSocketProvider = ({
       ws.current.close();
       setIsConnected(false);
     }
-
+``
     ws.current = new WebSocket("ws://192.168.4.1/");
 
     Toast.show({

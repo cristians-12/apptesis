@@ -122,14 +122,14 @@ export default function ScheduleRegisterScreen() {
         textStyle={{ fontFamily: fontFamilies.MONTSERRAT.medium }}
         labelStyle={{ fontFamily: fontFamilies.MONTSERRAT.medium }}
       />
-      {show && (
+      {/* {show && (
         <DateTimePicker
           value={date}
           mode="date"
           display="default"
           onChange={onChange}
         />
-      )}
+      )} */}
       {value && (
         <TouchableOpacity onPress={enviarDosificacion} style={styles.boton}>
           <Text style={styles.text}>Enviar dosificación</Text>

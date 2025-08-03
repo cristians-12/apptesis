@@ -44,9 +44,11 @@ export default function InfoScreen() {
           backgroundColor: "transparent",
           flex: 1,
         }}
+
+        onTouchEnd={() => console.log(currentWeek)}
       >
         {/* Texto descripción eje Y rotado */}
-        <Text style={styles.yAxisLabel}>gr de comida dosificada</Text>
+        <Text style={styles.yAxisLabel}>Kg de comida dosificada</Text>
 
         {/* Gráfico */}
         <View style={{ backgroundColor: "transparent" }}>
@@ -57,10 +59,10 @@ export default function InfoScreen() {
             dataPointsWidth={10}
             xAxisColor={"black"}
             yAxisColor={"gray"}
-            yAxisLabelTexts={["0", "100", "200", "300", "400", "500"]} // etiquetas para eje Y
+            yAxisLabelTexts={["0", "1", "2", "3", "4", "5"]} // etiquetas para eje Y
             yAxisTextStyle={{ color: "gray", fontSize: 12 }}
             height={200}
-            width={width * 0.85}
+            width={width * 0.8}
             hideYAxisText={false} // mostrar etiquetas
             yAxisThickness={1}
             disableScroll={false}

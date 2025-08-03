@@ -68,7 +68,7 @@ export default function DailyConsumptionScreen() {
           flexDirection: "row",
           backgroundColor: colors.primary,
           paddingVertical: 15,
-          paddingHorizontal: 20,
+          paddingHorizontal: 5,
           marginHorizontal: 20,
           borderRadius: 10,
           marginBottom: 10,
@@ -92,7 +92,7 @@ export default function DailyConsumptionScreen() {
             textAlign: "center",
           }}
         >
-          Cantidad (gr)
+          Cantidad (Kgr)
         </Text>
         <Text
           style={{
@@ -230,7 +230,7 @@ export default function DailyConsumptionScreen() {
             textAlign: "center",
           }}
         >
-          {registros.reduce((total, item) => total + item.cantidad, 0)} gr
+          {registros.reduce((total, item) => total + item.cantidad, 0)} Kgr
         </Text>
       </View>
     </SafeAreaView>

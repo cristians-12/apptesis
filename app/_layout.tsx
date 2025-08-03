@@ -1,19 +1,20 @@
-import React, { useCallback, useEffect } from "react";
-import { View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { SafeAreaView, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
-import { useFonts } from 'expo-font';
+import { useFonts } from "expo-font";
 import { SQLiteProvider } from "expo-sqlite";
-import * as Notifications from 'expo-notifications';
-import * as TaskManager from 'expo-task-manager';
+import * as Notifications from "expo-notifications";
+import * as TaskManager from "expo-task-manager";
 import Toast from "react-native-toast-message";
 import BottomTabs from "./components/BottomTabs";
-import Constants from 'expo-constants';
+import Constants from "expo-constants";
 import { WebSocketProvider } from "./context/WebsocketProvider";
+import SplashScreenOwn from "./components/Splash/index";
 
+// Evita que se oculte solo el splash nativo
 SplashScreen.preventAutoHideAsync();
 
-// Configura el manejador de notificaciones
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -24,15 +25,13 @@ Notifications.setNotificationHandler({
   }),
 });
 
-// Define la tarea de fondo para notificaciones
-const BACKGROUND_NOTIFICATION_TASK = 'BACKGROUND_NOTIFICATION_TASK';
-
-TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, async ({ data, error, executionInfo }) => {
+// ---- Tarea para notificaciones en background ----
+const BACKGROUND_NOTIFICATION_TASK = "BACKGROUND_NOTIFICATION_TASK";
+TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, async ({ data, error }) => {
   if (error) {
     console.error("Error en tarea de fondo para notificaciones:", error);
     return;
   }
-  console.log("Tarea de fondo para notificaciones ejecutada con datos:", data);
   if (data) {
     await Notifications.scheduleNotificationAsync({
       content: {
@@ -43,38 +42,41 @@ TaskManager.defineTask(BACKGROUND_NOTIFICATION_TASK, async ({ data, error, execu
     });
   }
 });
+// -----------------------------------------------
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    MontserratLight: require('./assets/fonts/Montserrat-Light.ttf'),
-    MontserratMedium: require('./assets/fonts/Montserrat-Medium.ttf'),
-    MontserratBold: require('./assets/fonts/Montserrat-Bold.ttf'),
+    MontserratLight: require("./assets/fonts/Montserrat-Light.ttf"),
+    MontserratMedium: require("./assets/fonts/Montserrat-Medium.ttf"),
+    MontserratBold: require("./assets/fonts/Montserrat-Bold.ttf"),
   });
+  const [showCustomSplash, setShowCustomSplash] = useState(true);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
-      await SplashScreen.hideAsync();
+  useEffect(() => {
+    async function prepare() {
+      if (fontsLoaded) {
+        await SplashScreen.hideAsync();
+        setShowCustomSplash(true);
+      }
     }
+    prepare();
   }, [fontsLoaded]);
 
-  // Solicita permisos y configura notificaciones
+  // Notificaciones y registro de tareas
   useEffect(() => {
     const setupNotifications = async () => {
       try {
         const { status } = await Notifications.requestPermissionsAsync();
-        if (status !== 'granted') {
-          console.log('Permiso de notificaciones denegado');
+        if (status !== "granted") {
+          console.log("Permiso de notificaciones denegado");
           return;
         }
-        console.log('Permiso de notificaciones concedido');
-
         const token = await Notifications.getExpoPushTokenAsync({
           projectId: Constants.expoConfig?.extra?.eas?.projectId,
         });
         console.log("Token de notificación push:", token.data);
 
         await Notifications.registerTaskAsync(BACKGROUND_NOTIFICATION_TASK);
-        console.log("Tarea de fondo para notificaciones registrada:", BACKGROUND_NOTIFICATION_TASK);
       } catch (error) {
         console.error("Error al configurar notificaciones:", error);
       }
@@ -86,7 +88,6 @@ export default function App() {
       const cleanup = async () => {
         try {
           await Notifications.unregisterTaskAsync(BACKGROUND_NOTIFICATION_TASK);
-          console.log("Tarea de fondo para notificaciones desregistrada.");
         } catch (error) {
           console.error("Error al desregistrar tarea de fondo:", error);
         }
@@ -95,7 +96,7 @@ export default function App() {
     };
   }, []);
 
-  // Función para enviar notificaciones locales (pasada al WebSocketProvider)
+  // Función para enviar notificaciones locales
   const sendLocalNotification = (msg: string) => {
     Notifications.scheduleNotificationAsync({
       content: {
@@ -106,18 +107,22 @@ export default function App() {
     });
   };
 
-  if (!fontsLoaded) {
-    return null; // Muestra pantalla de carga mientras se cargan las fuentes
+  if (showCustomSplash) {
+    return (
+      <SplashScreenOwn
+        onFinish={() => setShowCustomSplash(false)}
+      />
+    );
   }
 
   return (
     <SQLiteProvider databaseName="registros.db">
       <WebSocketProvider sendLocalNotification={sendLocalNotification}>
-        <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <SafeAreaView style={{ flex: 1 }}>
           <NavigationContainer>
             <BottomTabs />
           </NavigationContainer>
-        </View>
+        </SafeAreaView>
         <Toast />
       </WebSocketProvider>
     </SQLiteProvider>
