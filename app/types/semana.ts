@@ -3,4 +3,5 @@ export interface RegistroType {
     timestamp: string;
     semana: string;
     cantidad: number;
+    fecha:string;
 }

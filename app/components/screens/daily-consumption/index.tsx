@@ -43,7 +43,7 @@ export default function DailyConsumptionScreen() {
     return (
       date.toLocaleDateString("es-ES", { month: "long", day: "numeric" }) +
       " " +
-      date.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })
+      date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })
     );
   };
 
@@ -151,7 +151,7 @@ export default function DailyConsumptionScreen() {
                   textAlign: "center",
                 }}
               >
-                {formatearFecha(item.timestamp)}
+                {formatearFecha(item.fecha)}
               </Text>
               <Text
                 style={{

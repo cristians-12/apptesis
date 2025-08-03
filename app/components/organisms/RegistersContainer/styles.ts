@@ -4,14 +4,15 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
     containerRegistros: {
-        borderWidth: 1,
+        borderTopWidth: 1,
         borderColor: colors.primary,
-        padding: 15,
+        padding: 0,
         borderRadius: 10,
         marginTop: 20,
-        height: 300,
-        width: '90%',
+        height: 350,
+        width: '100%',
         marginHorizontal: 'auto',
+        borderBottomWidth: 1
     },
     text: {
         fontFamily: fontFamilies.MONTSERRAT.medium,

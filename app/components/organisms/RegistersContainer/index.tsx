@@ -19,7 +19,7 @@ export default function RegistersContainer({ registros, onPressCard }: Props) {
                             <RegistroCard
                                 onPressDelete={() => onPressCard(registro.id)}
                                 key={registro.id}
-                                fecha={registro.timestamp}
+                                fecha={registro.fecha}
                                 semana={registro.semana}
                                 cantidad={registro.cantidad}
                             />
