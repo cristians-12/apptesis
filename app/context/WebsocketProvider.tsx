@@ -90,10 +90,11 @@ export const WebSocketProvider = ({
         Toast.show({
           type: "info",
           text1: "Mensaje recibido",
-          text2: `Datos: ${
-            parsedMessage.data || JSON.stringify(parsedMessage)
-          }`,
+          text2: `Datos: ${parsedMessage.data || JSON.stringify(parsedMessage)
+            }`,
         });
+
+        console.log('mensaje recibido', message);
 
         const guardarYActualizar = async () => {
           console.log("Mensaje recibido:", message);
@@ -112,7 +113,7 @@ export const WebSocketProvider = ({
         };
         guardarYActualizar();
 
-        // Enviar notificación local si hay datos
+
         if (parsedMessage.data) {
           sendLocalNotification(parsedMessage.data);
           console.log(
@@ -136,7 +137,7 @@ export const WebSocketProvider = ({
       ws.current.close();
       setIsConnected(false);
     }
-``
+    ``
     ws.current = new WebSocket("ws://192.168.4.1/");
 
     Toast.show({
@@ -217,7 +218,7 @@ export const WebSocketProvider = ({
         text2: "No estás conectado al panel.",
       });
     }
-    guardarRegistroYActualizar(obj);
+    // guardarRegistroYActualizar(obj);
   }, []);
 
   useEffect(() => {

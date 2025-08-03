@@ -8,9 +8,15 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#F5F5F5",
+    paddingHorizontal: 18
   },
   text: {
     fontFamily: fontFamilies.MONTSERRAT.medium,
+
+  },
+  text3: {
+    fontFamily: fontFamilies.MONTSERRAT.medium,
+    color: 'white'
   },
   text2: {
     fontFamily: fontFamilies.MONTSERRAT.bold,

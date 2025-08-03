@@ -142,7 +142,7 @@ export default function DateScheduleScreen() {
       </Text>
       {isConnected ? (
         <TouchableOpacity onPress={() => setShow(true)} style={styles.boton}>
-          <Text style={styles.text}>Programar dosificación</Text>
+          <Text style={styles.text3}>Programar dosificación</Text>
         </TouchableOpacity>
       ) : (
         <Text style={styles.textDanger}>

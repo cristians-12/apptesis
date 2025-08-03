@@ -12,11 +12,6 @@ export default function useNotifications() {
 
     const registerForPushNotificationsAsync = useCallback(async () => {
         try {
-            // if (!Device.isDevice) {
-            //     Alert.alert("Error", "Push notifications are not supported on simulators.");
-            //     return;
-            // }
-
             const { status: existingStatus } = await Notifications.getPermissionsAsync();
             let finalStatus = existingStatus;
 
