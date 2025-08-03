@@ -17,13 +17,16 @@ import Toast from "react-native-toast-message";
 import useDatabase from "@/app/hooks/useDatabase";
 import { useWebSocketContext } from "@/app/context/WebsocketProvider";
 import useServo from "@/app/hooks/useServo";
+import { Ionicons } from "@expo/vector-icons";
+import ModalConfiguration from "../../organisms/modals/modal-configuration";
 
 export default function Home() {
   const logoImage = require("../../../assets/images/logofinal.png");
   const [modal, setModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState(false);
 
   // Usar el contexto de WebSocketProvider
-  const { connectWebSocket, disconnectWebSocket, registros, isConnected, obtenerRegistrosyGuardar } = useWebSocketContext();
+  const { connectWebSocket, registros, isConnected, obtenerRegistrosyGuardar } = useWebSocketContext();
 
   const {
     crearTabla,
@@ -46,6 +49,9 @@ export default function Home() {
   const handleCloseModal = () => {
     setModal(false);
   };
+  const handleCloseModalConfig = () => {
+    setModalConfig(false);
+  };
 
   useEffect(() => {
     crearTabla();
@@ -60,6 +66,9 @@ export default function Home() {
           style={styles.btnManual}
         >
           <BookIcon fill={colors.primary} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setModalConfig(true)} style={styles.btnConfig}>
+          <Ionicons name="settings-sharp" size={32} color={colors.primary} />
         </TouchableOpacity>
         <Image style={styles.image} source={logoImage} />
 
@@ -108,6 +117,7 @@ export default function Home() {
         )} */}
       </ScrollView>
       {modal && <ModalManual onPressClose={handleCloseModal} />}
+      {modalConfig && <ModalConfiguration onPressClose={handleCloseModalConfig} />}
     </View>
   );
 }

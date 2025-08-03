@@ -50,6 +50,16 @@ export const styles = StyleSheet.create(
             top: 50,
             right: 15,
         },
+        btnConfig: {
+            // backgroundColor: colors.primary
+            borderWidth: 1,
+            borderColor: 'gray',
+            padding: 7,
+            borderRadius: 10,
+            position: 'absolute',
+            top: 100,
+            right: 15,
+        },
         text: {
             fontFamily: fontFamilies.MONTSERRAT.medium
         },

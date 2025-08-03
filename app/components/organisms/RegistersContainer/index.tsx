@@ -11,7 +11,7 @@ interface Props {
 export default function RegistersContainer({ registros, onPressCard }: Props) {
     return (
         <>
-            <Text style={{ ...styles.text, textAlign: 'center' }}>Registros de dosificación</Text>
+            {/* <Text style={{ ...styles.text, textAlign: 'center' }}>Registros de dosificación</Text> */}
             <ScrollView style={styles.containerRegistros} horizontal={false} showsVerticalScrollIndicator={false}>
                 {registros.length > 0 ?
                     (

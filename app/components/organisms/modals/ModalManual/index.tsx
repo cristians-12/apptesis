@@ -16,7 +16,6 @@ export default function ModalManual({ onPressClose }: Props) {
           <Text style={styles.text}>Manual de usuario</Text>
           <TouchableOpacity onPress={onPressClose}>
             <CloseIcon fill={colors.primary} width={30} />
-            {/* <Text>x</Text> */}
           </TouchableOpacity>
         </View>
         <View style={styles.container2}>

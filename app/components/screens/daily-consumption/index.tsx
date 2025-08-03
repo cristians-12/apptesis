@@ -230,7 +230,7 @@ export default function DailyConsumptionScreen() {
             textAlign: "center",
           }}
         >
-          {registros.reduce((total, item) => total + item.cantidad, 0)} Kgr
+          {registros.reduce((total, item) => total + item.cantidad, 0).toFixed(2)} Kgr
         </Text>
       </View>
     </SafeAreaView>
